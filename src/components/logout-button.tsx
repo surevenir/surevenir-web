@@ -11,8 +11,14 @@ export function LogoutButton() {
 
   const handleLogout = async () => {
     try {
+      // Logout dari Firebase
       await signOut(auth);
-      // Redirect to login page
+
+      // Hapus cookie token
+      document.cookie =
+        "idToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
+      // Redirect ke halaman login
       router.push("/auth/login");
     } catch (error) {
       console.error("Logout failed:", error);

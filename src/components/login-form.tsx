@@ -30,20 +30,25 @@ export function LoginForm() {
     setError("");
 
     try {
-      // Firebase login
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
         password
       );
+
       const idToken = await userCredential.user.getIdToken();
 
+      alert(idToken);
+
       // Simpan token di cookie
-      document.cookie = `idToken=${idToken}; path=/; Secure; HttpOnly; SameSite=Strict;`;
+      if (typeof window !== "undefined") {
+        document.cookie = `idToken=${idToken}; path=/; Secure; SameSite=Strict;`;
+      }
 
       // Redirect to dashboard or home
       router.push("/dashboard");
     } catch (err: any) {
+      console.error("Login failed:", err);
       setError(err.message);
     } finally {
       setLoading(false);
