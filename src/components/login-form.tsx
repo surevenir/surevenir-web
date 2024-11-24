@@ -38,8 +38,6 @@ export function LoginForm() {
 
       const idToken = await userCredential.user.getIdToken();
 
-      alert(idToken);
-
       // Simpan token di cookie
       if (typeof window !== "undefined") {
         document.cookie = `idToken=${idToken}; path=/; Secure; SameSite=Strict;`;

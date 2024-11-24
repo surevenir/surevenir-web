@@ -20,6 +20,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import Link from "next/link";
 
 type Product = {
   id: number;
@@ -37,7 +38,12 @@ export default function ProductView({ products }: ProductViewProps) {
   return (
     <>
       <div className="px-8">
-        <h1 className="py-2">Products List</h1>
+        <div className="flex justify-between">
+          <h1 className="py-2">Products List</h1>
+          <Link href={"/dashboard/products/add"}>
+            <Button>Add Product</Button>
+          </Link>
+        </div>
         <Table>
           <TableCaption>Products List</TableCaption>
           <TableHeader>
