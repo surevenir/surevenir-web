@@ -42,8 +42,8 @@ const data = {
       isActive: false,
       items: [
         {
-          title: "Markets Details",
-          url: "#",
+          title: "Market Details",
+          url: "/dashboard/markets",
         },
       ],
     },
