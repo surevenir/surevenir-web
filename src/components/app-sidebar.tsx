@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
 
-// This is sample data.
 const data = {
   profile: {
     name: "Surevenir",
