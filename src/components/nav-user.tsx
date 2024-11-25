@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from "lucide-react";
+import { ChevronsUpDown } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -59,7 +52,7 @@ export function NavUser({
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="rounded-lg w-[--radix-dropdown-menu-trigger-width] min-w-56"
+            // className="rounded-lg w-[--radix-dropdown-menu-trigger-width] min-w-56"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}

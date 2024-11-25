@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { auth } from "@/lib/firebaseConfig";
+import { toast } from "sonner";
 
 export function LoginForm() {
   const router = useRouter();
@@ -44,6 +45,7 @@ export function LoginForm() {
       }
 
       // Redirect to dashboard or home
+      toast("Welcome to Dashboard");
       router.push("/dashboard");
     } catch (err: any) {
       console.error("Login failed:", err);
@@ -86,6 +88,7 @@ export function LoginForm() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="********"
               required
             />
           </div>
@@ -96,7 +99,7 @@ export function LoginForm() {
           <Button
             variant="outline"
             className="w-full"
-            onClick={() => alert("Google Login Coming Soon")}
+            onClick={() => toast("Google Login Coming Soon")}
           >
             Login with Google
           </Button>

@@ -6,18 +6,28 @@ const PUBLIC_ROUTES = ["/", "/auth/login", "/auth/register"];
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Ambil token dari cookies
+  const idToken = request.cookies.get("idToken")?.value;
+
+  // Jika pengguna sudah login, blok akses ke "/auth/login" dan "/auth/register"
+  if (
+    idToken &&
+    (pathname === "/auth/login" || pathname === "/auth/register")
+  ) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
   // Izinkan akses ke public routes tanpa validasi
   if (PUBLIC_ROUTES.includes(pathname)) {
     return NextResponse.next();
   }
 
-  const idToken = request.cookies.get("idToken")?.value;
-
+  // Jika tidak ada token, arahkan pengguna ke "/auth/login"
   if (!idToken) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
-  // Kirim token ke API route untuk validasi
+  // Validasi token dengan API
   try {
     const response = await fetch(
       `${request.nextUrl.origin}/api/validate-token`,
@@ -30,6 +40,7 @@ export async function middleware(request: NextRequest) {
       }
     );
 
+    // Jika token valid, lanjutkan request
     if (response.status === 200) {
       const decodedToken = await response.json();
 
@@ -41,9 +52,10 @@ export async function middleware(request: NextRequest) {
     console.error("Error during token validation:", error);
   }
 
+  // Jika validasi token gagal, arahkan ke "/auth/login"
   return NextResponse.redirect(new URL("/auth/login", request.url));
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/profile/:path*"],
+  matcher: ["/dashboard/:path*", "/auth/:path*"], // Middleware berlaku untuk dashboard dan auth routes
 };

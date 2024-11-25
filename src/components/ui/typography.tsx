@@ -4,7 +4,7 @@ export function TypographyH1({
   children: React.ReactNode;
 }>) {
   return (
-    <h1 className="scroll-m-20 font-extrabold text-4xl lg:text-5xl tracking-tight">
+    <h1 className="scroll-m-20 font-extrabold text-4xl text-primary lg:text-5xl dark:text-white tracking-tight">
       {children}
     </h1>
   );
@@ -16,7 +16,7 @@ export function TypographyH2({
   children: React.ReactNode;
 }>) {
   return (
-    <h2 className="scroll-m-20 first:mt-0 pb-2 font-semibold text-3xl tracking-tight">
+    <h2 className="scroll-m-20 first:mt-0 pb-2 font-semibold text-3xl text-primary dark:text-white tracking-tight">
       {children}
     </h2>
   );
@@ -28,7 +28,7 @@ export function TypographyH3({
   children: React.ReactNode;
 }>) {
   return (
-    <h3 className="scroll-m-20 font-semibold text-2xl tracking-tight">
+    <h3 className="scroll-m-20 font-semibold text-2xl text-primary dark:text-white tracking-tight">
       {children}
     </h3>
   );
@@ -40,7 +40,7 @@ export function TypographyH4({
   children: React.ReactNode;
 }>) {
   return (
-    <h4 className="scroll-m-20 font-semibold text-xl tracking-tight">
+    <h4 className="scroll-m-20 font-semibold text-primary text-xl dark:text-white tracking-tight">
       {children}
     </h4>
   );

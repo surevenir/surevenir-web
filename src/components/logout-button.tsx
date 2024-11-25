@@ -1,10 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/firebaseConfig";
 import { signOut } from "firebase/auth";
 import { LogOut } from "lucide-react";
+import { RainbowButton } from "./ui/rainbow-button";
 
 export function LogoutButton() {
   const router = useRouter();
@@ -26,9 +26,9 @@ export function LogoutButton() {
   };
 
   return (
-    <Button variant="outline" onClick={handleLogout}>
-      <LogOut />
+    <RainbowButton onClick={handleLogout}>
+      <LogOut height={15} />
       Log out
-    </Button>
+    </RainbowButton>
   );
 }

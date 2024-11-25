@@ -2,16 +2,14 @@
 
 import * as React from "react";
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
   Frame,
-  GalleryVerticalEnd,
   Map,
   PieChart,
   Settings2,
-  SquareTerminal,
+  LayoutDashboardIcon,
+  MapPinHouseIcon,
+  ShoppingBasketIcon,
+  HousePlugIcon,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -36,36 +34,50 @@ const data = {
   },
   navMain: [
     {
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: LayoutDashboardIcon,
+      items: [
+        {
+          title: "Dashboard",
+          url: "/dashboard",
+        },
+      ],
+    },
+    {
       title: "Markets",
       url: "/dashboard/markets",
-      icon: SquareTerminal,
-      isActive: false,
+      icon: MapPinHouseIcon,
       items: [
         {
           title: "Market Details",
           url: "/dashboard/markets",
+        },
+        {
+          title: "Market reviews",
+          url: "/dashboard/markets/reviews",
         },
       ],
     },
     {
       title: "Merchants",
       url: "#",
-      icon: Bot,
+      icon: HousePlugIcon,
       items: [
         {
           title: "Merchant Details",
-          url: "#",
+          url: "/dashboard/merchants",
         },
         {
-          title: "Add Merchants",
-          url: "#",
+          title: "Merchant Reviews",
+          url: "/dashboard/merchants/reviews",
         },
       ],
     },
     {
       title: "Products",
       url: "/dashboard/products",
-      icon: GalleryVerticalEnd,
+      icon: ShoppingBasketIcon,
       items: [
         {
           title: "Product Details",
@@ -76,35 +88,19 @@ const data = {
           url: "/dashboard/products/categories",
         },
         {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
+          title: "Product Reviews",
+          url: "/dashboard/products/reviews",
         },
       ],
     },
     {
       title: "Settings",
-      url: "#",
+      url: "/dashboard/settings",
       icon: Settings2,
       items: [
         {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
+          title: "Profile",
+          url: "/dashboard/settings/profile",
         },
       ],
     },
