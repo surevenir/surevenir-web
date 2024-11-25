@@ -18,18 +18,18 @@ import { ModeToggle } from "@/components/ui/mode-toggle";
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { LogoutButton } from "./logout-button";
 import { LogInIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
-interface NavigationBarProps {
-  isLoggedIn?: boolean;
-}
-
-export default function NavigationBar({
-  isLoggedIn = false,
-}: NavigationBarProps) {
+export default function NavigationBar() {
   const navMain = [
     {
       title: "Markets",
       url: "/markets",
+    },
+    {
+      title: "Merchants",
+      url: "/merchants",
     },
     {
       title: "Products",
@@ -45,9 +45,18 @@ export default function NavigationBar({
     },
   ];
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = Cookies.get("idToken");
+    console.log(token);
+
+    setIsLoggedIn(!!token);
+  }, []);
+
   return (
     <>
-      <div className="flex justify-between items-center">
+      <div className="top-0 z-50 sticky flex justify-between items-center bg-white/5 shadow-md backdrop-blur-md px-8 md:px-16 lg:px-32 py-4">
         <Link href={"/"} className="flex items-center gap-2">
           <Image
             src="/logo.png"
@@ -61,7 +70,7 @@ export default function NavigationBar({
         <NavigationMenu>
           <NavigationMenuList>
             {navMain.map((item) => (
-              <NavigationMenuItem key={item.title}>
+              <NavigationMenuItem key={item.title} className="bg-transparent">
                 <Link href={item.url} legacyBehavior passHref>
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                     {item.title}

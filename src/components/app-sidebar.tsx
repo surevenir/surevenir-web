@@ -54,7 +54,7 @@ const data = {
           url: "/dashboard/markets",
         },
         {
-          title: "Market reviews",
+          title: "Market Reviews",
           url: "/dashboard/markets/reviews",
         },
       ],

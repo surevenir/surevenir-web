@@ -24,8 +24,11 @@ export default function RootLayout({
 }>) {
   monitorTokenRefresh();
   return (
-    <html lang="en">
-      <body className={` antialiased ${roboto.className}`}>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={` antialiased ${roboto.className}`}
+        suppressHydrationWarning
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

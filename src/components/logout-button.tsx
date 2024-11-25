@@ -26,7 +26,7 @@ export function LogoutButton() {
   };
 
   return (
-    <RainbowButton onClick={handleLogout}>
+    <RainbowButton onClick={handleLogout} className="px-4 text-sm">
       <LogOut height={15} />
       Log out
     </RainbowButton>
