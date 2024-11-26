@@ -50,7 +50,7 @@ export default function Footer() {
   return (
     <>
       <footer className="md:px-8 lg:px-32 py-12">
-        <div className="flex md:flex-row flex-col justify-between px-8">
+        <div className="flex md:flex-row flex-col justify-between px-8 lg:px-0">
           <div>
             <h2 className="mb-4 font-bold text-xl">Surevenir</h2>
             <p className="text-gray-400 text-sm">

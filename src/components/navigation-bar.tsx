@@ -75,14 +75,38 @@ export default function NavigationBar() {
               <BorderBeam duration={10} delay={7} size={100} />
             </div>
           </SheetTrigger>
-          <SheetContent side={"left"}>
-            <SheetHeader>
-              <SheetTitle>Are you absolutely sure?</SheetTitle>
-              <SheetDescription>
-                This action cannot be undone. This will permanently delete your
-                account and remove your data from our servers.
-              </SheetDescription>
+          <SheetContent side={"left"} className="flex justify-start">
+            <SheetHeader className="">
+              <Link href={"/"}>
+                <SheetTitle className="flex justify-start md:text-xl">
+                  Surevenir
+                </SheetTitle>
+              </Link>
             </SheetHeader>
+            <NavigationMenu className="flex justify-center w-full">
+              <NavigationMenuList className="flex flex-col gap-6 md:m-0 -ml-8">
+                {navMain.map((item) => (
+                  <NavigationMenuItem
+                    key={item.title}
+                    className="flex justify-center bg-transparent w-full"
+                  >
+                    <Link
+                      href={item.url}
+                      legacyBehavior
+                      passHref
+                      className="bg-red-400"
+                    >
+                      <NavigationMenuLink
+                        className={`${navigationMenuTriggerStyle()} w-64 md:text-lg`}
+                      >
+                        {item.title}
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+                ))}
+                <ModeToggle />
+              </NavigationMenuList>
+            </NavigationMenu>
           </SheetContent>
         </Sheet>
       </div>
