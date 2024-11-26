@@ -49,14 +49,14 @@ const footerData = [
 export default function Footer() {
   return (
     <>
-      <footer className="lg:px-32 py-12">
-        <div className="flex justify-between">
+      <footer className="md:px-8 lg:px-32 py-12">
+        <div className="flex md:flex-row flex-col justify-between px-8">
           <div>
             <h2 className="mb-4 font-bold text-xl">Surevenir</h2>
             <p className="text-gray-400 text-sm">
               Scan and Buy Souvenir Easily
             </p>
-            <div className="flex items-center gap-4 mt-4">
+            <div className="flex items-center gap-4 mt-4 pb-4">
               <Link href="https://github.com/surevenir">
                 <GitHubLogoIcon width={30} height={30} />
               </Link>

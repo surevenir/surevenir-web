@@ -21,6 +21,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import Footer from "@/components/footer";
+import { BorderBeam } from "@/components/ui/border-beam";
 
 export default function HomePage() {
   const { resolvedTheme } = useTheme();
@@ -32,13 +33,6 @@ export default function HomePage() {
 
   return (
     <>
-      <Particles
-        className="fixed inset-0"
-        quantity={100}
-        ease={80}
-        color={color}
-        refresh
-      />
       <NavigationBar />
       <div className="px-8 md:px-16 lg:px-32 w-full">
         <div className="flex flex-col justify-center py-16 w-full">
@@ -65,55 +59,67 @@ export default function HomePage() {
           </TypographyMuted>
           <MarqueeReview />
 
-          <div className="relative">
+          <div className="block relative dark:hidden">
             <HeroVideoDialog
-              className="block dark:hidden"
+              className=""
               animationStyle="from-center"
               videoSrc="https://www.youtube.com/embed/qh3NGpYRG3I?si=4rb-zSdDkVK9qxxb"
               thumbnailSrc="https://startup-template-sage.vercel.app/hero-light.png"
               thumbnailAlt="Hero Video"
             />
+            <BorderBeam duration={12} delay={9} />
+          </div>
+          <div className="dark:block relative hidden">
             <HeroVideoDialog
-              className="dark:block hidden"
+              className=""
               animationStyle="from-center"
               videoSrc="https://www.youtube.com/embed/qh3NGpYRG3I?si=4rb-zSdDkVK9qxxb"
               thumbnailSrc="https://startup-template-sage.vercel.app/hero-dark.png"
               thumbnailAlt="Hero Video"
             />
-            <TextRevealByWord text="SureVenir can help you to find the best souvenirs." />
-
-            <BentoDemo />
-            <Accordion
-              type="single"
-              collapsible
-              className="flex flex-col justify-center px-32 py-32"
-            >
-              <AccordionItem value="item-1">
-                <AccordionTrigger>Is it accessible?</AccordionTrigger>
-                <AccordionContent>
-                  Yes. It adheres to the WAI-ARIA design pattern.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-2">
-                <AccordionTrigger>Is it styled?</AccordionTrigger>
-                <AccordionContent>
-                  Yes. It comes with default styles that matches the other
-                  components&apos; aesthetic.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-3">
-                <AccordionTrigger>Is it animated?</AccordionTrigger>
-                <AccordionContent>
-                  Yes. It&apos;s animated by default, but you can disable it if
-                  you prefer.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-            <MarqueeProduct />
+            <BorderBeam duration={12} delay={9} />
           </div>
+
+          <TextRevealByWord text="SureVenir can help you to find the best souvenirs." />
+
+          <BentoDemo />
+          <Accordion
+            type="single"
+            collapsible
+            className="flex flex-col justify-center py-32"
+          >
+            <AccordionItem value="item-1">
+              <AccordionTrigger>Is it accessible?</AccordionTrigger>
+              <AccordionContent>
+                Yes. It adheres to the WAI-ARIA design pattern.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2">
+              <AccordionTrigger>Is it styled?</AccordionTrigger>
+              <AccordionContent>
+                Yes. It comes with default styles that matches the other
+                components&apos; aesthetic.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-3">
+              <AccordionTrigger>Is it animated?</AccordionTrigger>
+              <AccordionContent>
+                Yes. It&apos;s animated by default, but you can disable it if
+                you prefer.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+          <MarqueeProduct />
         </div>
       </div>
       <Footer />
+      <Particles
+        className="fixed inset-0"
+        quantity={100}
+        ease={80}
+        color={color}
+        refresh
+      />
     </>
   );
 }

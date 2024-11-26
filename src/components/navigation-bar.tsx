@@ -12,14 +12,24 @@ import {
   navigationMenuTriggerStyle,
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import Link from "next/link";
 import { TypographyLarge } from "@/components/ui/typography";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { LogoutButton } from "./logout-button";
-import { LogInIcon } from "lucide-react";
+import { LogInIcon, MenuIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import ShinyButton from "./ui/shiny-button";
+import { BorderBeam } from "./ui/border-beam";
 
 export default function NavigationBar() {
   const navMain = [
@@ -56,7 +66,28 @@ export default function NavigationBar() {
 
   return (
     <>
-      <div className="top-0 z-50 sticky flex justify-between items-center bg-white/5 shadow-md backdrop-blur-md px-8 md:px-16 lg:px-32 py-4">
+      <div className="lg:hidden">
+        <Sheet>
+          <SheetTrigger className="top-4 right-4 z-50 fixed">
+            <div className="relative flex justify-center items-center gap-2 bg-white/5 backdrop-blur-md px-4 py-2 rounded-md">
+              <MenuIcon width={20} height={20} />
+              <p>Menu</p>
+              <BorderBeam duration={10} delay={7} size={100} />
+            </div>
+          </SheetTrigger>
+          <SheetContent side={"left"}>
+            <SheetHeader>
+              <SheetTitle>Are you absolutely sure?</SheetTitle>
+              <SheetDescription>
+                This action cannot be undone. This will permanently delete your
+                account and remove your data from our servers.
+              </SheetDescription>
+            </SheetHeader>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      <div className="top-0 z-50 sticky lg:flex justify-between items-center hidden bg-white/5 shadow-md backdrop-blur-md px-8 md:px-16 lg:px-32 py-4">
         <Link href={"/"} className="flex items-center gap-2">
           <Image
             src="/logo.png"
