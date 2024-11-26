@@ -1,27 +1,28 @@
 "use client";
 
-import NavigationBar from "@/components/navigation-bar";
-import AnimatedGradientText from "@/components/ui/animated-gradient-text";
-import SparklesText from "@/components/ui/sparkles-text";
-import { TypographyMuted } from "@/components/ui/typography";
-import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
-import { MarqueeReview } from "./MarqueeReview";
-import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import Particles from "@/components/ui/particles";
-import HeroVideoDialog from "@/components/ui/hero-video-dialog";
-import TextRevealByWord from "@/components/ui/text-reveal";
-import { BentoDemo } from "./BentoGrid";
-import { MarqueeProduct } from "./MarqueeProduct";
+import { useEffect, useState } from "react";
+import Footer from "@/components/footer";
+import NavigationBar from "@/components/navigation-bar";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import Footer from "@/components/footer";
+import AnimatedGradientText from "@/components/ui/animated-gradient-text";
 import { BorderBeam } from "@/components/ui/border-beam";
+import HeroVideoDialog from "@/components/ui/hero-video-dialog";
+import Particles from "@/components/ui/particles";
+import SparklesText from "@/components/ui/sparkles-text";
+import TextRevealByWord from "@/components/ui/text-reveal";
+import { TypographyMuted } from "@/components/ui/typography";
+import { cn } from "@/lib/utils";
+
+import { BentoDemo } from "./BentoGrid";
+import { MarqueeProduct } from "./MarqueeProduct";
+import { MarqueeReview } from "./MarqueeReview";
 
 export default function HomePage() {
   const { resolvedTheme } = useTheme();

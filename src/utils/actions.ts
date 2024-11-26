@@ -71,6 +71,48 @@ export async function getUsers(): Promise<any[] | null> {
   }
 }
 
+export async function postUser(data: {
+  id: string;
+  full_name: string;
+  username: string;
+  email: string;
+  password: string;
+}): Promise<any | null> {
+  try {
+    const host: string = process.env.HOST || "http://localhost:3000";
+    const token: string = process.env.API_TOKEN || "user1";
+
+    if (!token) {
+      throw new Error("Authorization token is missing.");
+    }
+
+    const response = await fetch(`${host}/api/users`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorMessage = `Error posting user: ${response.status} ${response.statusText}`;
+      throw new Error(errorMessage);
+    }
+
+    const result = await response.json();
+
+    if (result.success && result.data) {
+      return result.data;
+    } else {
+      throw new Error("Invalid API response format.");
+    }
+  } catch (error: any) {
+    console.error("Failed to post user:", error.message);
+    return null;
+  }
+}
+
 export async function getProducts(): Promise<any[] | null> {
   try {
     const host: string = process.env.HOST || "http://localhost:3000";

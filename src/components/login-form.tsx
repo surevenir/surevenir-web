@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { signInWithEmailAndPassword } from "firebase/auth";
-
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,9 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { auth } from "@/lib/firebaseConfig";
-import { toast } from "sonner";
-import Particles from "./ui/particles";
-import { useTheme } from "next-themes";
+import { postUser } from "@/utils/actions";
 
 export function LoginForm() {
   const router = useRouter();
@@ -57,22 +55,8 @@ export function LoginForm() {
     }
   };
 
-  const { resolvedTheme } = useTheme();
-  const [color, setColor] = useState("#ffffff");
-
-  useEffect(() => {
-    setColor(resolvedTheme === "dark" ? "#ffffff" : "#000000");
-  }, [resolvedTheme]);
-
   return (
     <>
-      <Particles
-        className="fixed inset-0"
-        quantity={100}
-        ease={80}
-        color={color}
-        refresh
-      />
       <Card className="mx-auto max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
@@ -108,7 +92,7 @@ export function LoginForm() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="********"
+                placeholder="••••••••"
                 required
               />
             </div>
