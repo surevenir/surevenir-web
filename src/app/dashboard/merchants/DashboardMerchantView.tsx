@@ -83,7 +83,7 @@
 //   lng: 115.216,
 // };
 
-// export default function MerchantView({
+// export default function DashboardMerchantView({
 //   merchants: initialMerchants,
 // }: MerchantViewProps) {
 //   const [merchants, setMerchants] = useState<Merchant[]>(initialMerchants);

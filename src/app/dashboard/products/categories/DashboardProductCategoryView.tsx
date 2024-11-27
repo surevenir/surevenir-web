@@ -78,7 +78,7 @@ const formSchema = z.object({
 });
 type FormData = z.infer<typeof formSchema>;
 
-export default function CategoryView({
+export default function DashboardProductCategoryView({
   categories: initialCategories,
 }: CategoryViewProps) {
   const [categories, setCategories] = useState<Category[]>(initialCategories);

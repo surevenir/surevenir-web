@@ -1,10 +1,9 @@
 "use server";
 
 import { getStatistic } from "@/utils/actions";
-import StatisticView from "./StatisticView";
-import { ProductChart } from "./ProductChart";
-import { Card } from "@/components/ui/card";
-import SalesView from "./SalesView";
+import StatisticView from "./DashboardStatisticView";
+import { ProductChart } from "./DashboardProductChart";
+import SalesView from "./DashboardSalesView";
 
 export default async function DashboardPage() {
   const statistic = (await getStatistic()) || []; // Gunakan array kosong jika null

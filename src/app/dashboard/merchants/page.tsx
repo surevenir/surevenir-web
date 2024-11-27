@@ -3,7 +3,7 @@
 import { getMerchants } from "@/utils/actions";
 // import MerchantView from "./MerchantView";
 
-export default async function ProductPage() {
+export default async function DashboardMerchantsPage() {
   const merchants = await getMerchants();
 
   if (!merchants || merchants.length === 0) {

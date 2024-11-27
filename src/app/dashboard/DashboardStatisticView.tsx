@@ -39,7 +39,7 @@ const getIconByKey = (keyname: string) => {
   }
 };
 
-export default function StatisticView({ statistic }: StatisticProps) {
+export default function DashboardStatisticView({ statistic }: StatisticProps) {
   const transformedStatistic = statistic.map((item) => {
     const [key, value] = Object.entries(item)[0];
     return { key, value } as StatisticItem;
@@ -61,8 +61,7 @@ export default function StatisticView({ statistic }: StatisticProps) {
             <CardContent>
               <CardDescription>
                 <TypographyH3>
-                  <NumberTicker value={value} />{" "}
-                  {/* Tampilkan nilai sebenarnya */}
+                  {value && <NumberTicker value={value} />}
                 </TypographyH3>
               </CardDescription>
             </CardContent>

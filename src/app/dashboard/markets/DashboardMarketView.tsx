@@ -35,6 +35,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { deleteMarket, postMarket, editMarket } from "@/utils/actions";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
+import TableSkeleton from "@/components/table-skeleton";
 
 type Market = {
   id: number;
@@ -45,7 +47,7 @@ type Market = {
 };
 
 interface MarketViewProps {
-  markets: Market[];
+  markets: Market[] | [];
 }
 
 // Schema untuk validasi form
@@ -69,7 +71,7 @@ const defaultCenter = {
   lng: 115.216,
 };
 
-export default function MarketView({
+export default function DashboardMarketView({
   markets: initialMarkets,
 }: MarketViewProps) {
   const [markets, setMarkets] = useState<Market[]>(initialMarkets);
@@ -174,15 +176,6 @@ export default function MarketView({
     }
   };
 
-  if (!isLoaded)
-    return (
-      <>
-        <div className="px-8">
-          <p>Loading map...</p>
-        </div>
-      </>
-    );
-
   return (
     <div className="px-8">
       <div className="flex justify-between mb-4">
@@ -253,117 +246,126 @@ export default function MarketView({
           </DialogContent>
         </Dialog>
       </div>
-      <Table>
-        <TableCaption>Markets List</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>No</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {markets.map((market, index) => (
-            <TableRow key={market.id}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>{market.name}</TableCell>
-              <TableCell>{market.description}</TableCell>
-              <TableCell className="flex gap-2">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      onClick={() => {
-                        setSelectedMarket(market);
-                        form.reset({
-                          name: market.name,
-                          description: market.description,
-                          longitude: market.longitude,
-                          latitude: market.latitude,
-                        });
-                        setMapCoordinates({
-                          lat: parseFloat(market.latitude),
-                          lng: parseFloat(market.longitude),
-                        });
-                      }}
-                    >
-                      Edit
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Edit Market</DialogTitle>
-                      <DialogDescription>
-                        Update the details of the Market below.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <Form {...form}>
-                      <form
-                        onSubmit={form.handleSubmit(handleEditMarket)}
-                        className="space-y-4"
-                      >
-                        <FormField
-                          control={form.control}
-                          name="name"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Name</FormLabel>
-                              <FormControl>
-                                <Input
-                                  placeholder="Enter market name"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="description"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Description</FormLabel>
-                              <FormControl>
-                                <Input
-                                  placeholder="Enter market description"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <div className="border rounded w-full h-[300px]">
-                          <GoogleMap
-                            mapContainerStyle={mapContainerStyle}
-                            zoom={12}
-                            center={mapCoordinates}
-                            onClick={handleMapClick}
-                          >
-                            <Marker position={mapCoordinates} />
-                          </GoogleMap>
-                        </div>
-                        <DialogFooter>
-                          <Button type="submit" disabled={loading}>
-                            {loading ? "Updating..." : "Update Market"}
-                          </Button>
-                        </DialogFooter>
-                      </form>
-                    </Form>
-                  </DialogContent>
-                </Dialog>
-                <Button
-                  variant="destructive"
-                  onClick={() => handleDeleteMarket(market.id)}
-                >
-                  Delete
-                </Button>
-              </TableCell>
+
+      {!isLoaded && <TableSkeleton />}
+
+      {isLoaded && (
+        <Table>
+          <TableCaption>
+            {markets.length != 0 ? "Markets List" : "No Markets Found"}
+          </TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>No</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          {!isLoaded && <Skeleton className="w-full h-4" />}
+
+          <TableBody>
+            {markets.map((market, index) => (
+              <TableRow key={market.id}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>{market.name}</TableCell>
+                <TableCell>{market.description}</TableCell>
+                <TableCell className="flex gap-2">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        onClick={() => {
+                          setSelectedMarket(market);
+                          form.reset({
+                            name: market.name,
+                            description: market.description,
+                            longitude: market.longitude,
+                            latitude: market.latitude,
+                          });
+                          setMapCoordinates({
+                            lat: parseFloat(market.latitude),
+                            lng: parseFloat(market.longitude),
+                          });
+                        }}
+                      >
+                        Edit
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Edit Market</DialogTitle>
+                        <DialogDescription>
+                          Update the details of the Market below.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <Form {...form}>
+                        <form
+                          onSubmit={form.handleSubmit(handleEditMarket)}
+                          className="space-y-4"
+                        >
+                          <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Name</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="Enter market name"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="description"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Description</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="Enter market description"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <div className="border rounded w-full h-[300px]">
+                            <GoogleMap
+                              mapContainerStyle={mapContainerStyle}
+                              zoom={12}
+                              center={mapCoordinates}
+                              onClick={handleMapClick}
+                            >
+                              <Marker position={mapCoordinates} />
+                            </GoogleMap>
+                          </div>
+                          <DialogFooter>
+                            <Button type="submit" disabled={loading}>
+                              {loading ? "Updating..." : "Update Market"}
+                            </Button>
+                          </DialogFooter>
+                        </form>
+                      </Form>
+                    </DialogContent>
+                  </Dialog>
+                  <Button
+                    variant="destructive"
+                    onClick={() => handleDeleteMarket(market.id)}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </div>
   );
 }

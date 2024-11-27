@@ -34,7 +34,7 @@ interface ProductViewProps {
   products: Product[];
 }
 
-export default function ProductView({ products }: ProductViewProps) {
+export default function DashboardProductView({ products }: ProductViewProps) {
   return (
     <>
       <div className="px-8">

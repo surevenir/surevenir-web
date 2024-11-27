@@ -1,9 +1,9 @@
 "use server";
 
 import { getProducts } from "@/utils/actions";
-import ProductView from "./ProductView";
+import ProductView from "./DashboardProductView";
 
-export default async function ProductPage() {
+export default async function DashboardProductPage() {
   const products = await getProducts();
 
   if (!products || products.length === 0) {

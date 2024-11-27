@@ -1,5 +1,3 @@
-"use clent";
-
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -18,6 +16,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Metadata } from "next";
 import { ReactNode } from "react";
+import { DashboardDynamicBreadcrumb } from "./DashboardDynamicBreadcrumb";
 
 export const metadata: Metadata = {
   title: "Surevenir | Dashboard",
@@ -33,13 +32,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             <div className="flex items-center gap-2 px-4">
               <SidebarTrigger className="-ml-1" />
               <Separator orientation="vertical" className="mr-2 h-4" />
-              <Breadcrumb>
-                <BreadcrumbList>
-                  <BreadcrumbItem className="md:block hidden">
-                    <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
+              <DashboardDynamicBreadcrumb />
             </div>
             <ModeToggle />
           </div>

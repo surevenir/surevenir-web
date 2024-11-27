@@ -4,7 +4,7 @@ export async function getStatistic(): Promise<any[] | null> {
   try {
     const host: string = process.env.HOST || "http://localhost:3000";
 
-    const token: string = process.env.API_TOKEN || "user1";
+    const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -39,7 +39,7 @@ export async function getStatistic(): Promise<any[] | null> {
 export async function getUsers(): Promise<any[] | null> {
   try {
     const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "user1";
+    const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -80,7 +80,7 @@ export async function postUser(data: {
 }): Promise<any | null> {
   try {
     const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "user1";
+    const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -117,7 +117,7 @@ export async function getProducts(): Promise<any[] | null> {
   try {
     const host: string = process.env.HOST || "http://localhost:3000";
 
-    const token: string = process.env.API_TOKEN || "user1";
+    const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -153,7 +153,7 @@ export async function getCategories(): Promise<any[] | null> {
   try {
     const host: string = process.env.HOST || "http://localhost:3000";
 
-    const token: string = process.env.API_TOKEN || "user1";
+    const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -190,7 +190,7 @@ export async function postCategories(data: {
 }): Promise<any | null> {
   try {
     const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "user1";
+    const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -229,7 +229,7 @@ export async function editCategories(data: {
 }): Promise<any | null> {
   try {
     const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "user1";
+    const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -266,7 +266,7 @@ export async function editCategories(data: {
 export async function deleteCategories(id: number): Promise<any | null> {
   try {
     const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "user1";
+    const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -302,7 +302,7 @@ export async function deleteCategories(id: number): Promise<any | null> {
 export async function getMarkets(): Promise<any[] | null> {
   try {
     const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "user1";
+    const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -342,7 +342,7 @@ export async function postMarket(data: {
 }): Promise<any | null> {
   try {
     const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "user1";
+    const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -384,7 +384,7 @@ export async function editMarket(data: {
 }): Promise<any | null> {
   try {
     const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "user1";
+    const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -426,7 +426,7 @@ export async function editMarket(data: {
 export async function deleteMarket(id: number): Promise<any | null> {
   try {
     const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "user1";
+    const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -462,7 +462,7 @@ export async function deleteMarket(id: number): Promise<any | null> {
 export async function getMerchants(): Promise<any[] | null> {
   try {
     const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "user1";
+    const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -503,7 +503,7 @@ interface MerchantPayload {
 export async function postMerchant(data: MerchantPayload): Promise<any | null> {
   try {
     const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "user1";
+    const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -544,7 +544,7 @@ export async function editMerchant(
 ): Promise<any | null> {
   try {
     const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "user1";
+    const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -584,7 +584,7 @@ export async function editMerchant(
 export async function deleteMerchant(id: number): Promise<boolean> {
   try {
     const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "user1";
+    const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
