@@ -115,7 +115,7 @@ export default function HomePage() {
       </div>
       <Footer />
       <Particles
-        className="fixed inset-0"
+        className="-z-50 fixed inset-0"
         quantity={100}
         ease={80}
         color={color}

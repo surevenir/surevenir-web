@@ -375,6 +375,52 @@ export async function postMarket(data: {
   }
 }
 
+export async function postMarketImages(data: {
+  id: number;
+  images: File[];
+}): Promise<any | null> {
+  try {
+    const host = process.env.HOST || "http://localhost:3000";
+    const token = process.env.API_TOKEN || "";
+
+    // Validasi lebih ketat untuk file
+    const validImages = data.images.filter(
+      (file) => file.type.startsWith("image/") && file.size <= 5 * 1024 * 1024 // max 5MB
+    );
+
+    if (validImages.length === 0) {
+      throw new Error("No valid images provided. Check file types and sizes.");
+    }
+
+    const formData = new FormData();
+    validImages.forEach((image) => {
+      formData.append("images", image);
+    });
+
+    const response = await fetch(`${host}/api/markets/${data.id}/images`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      const errorMessage = `Error posting market images: ${response.status} - ${errorText}`;
+      console.error(errorMessage);
+      throw new Error(errorMessage);
+    }
+
+    const result = await response.json();
+
+    return result.data || null;
+  } catch (error: any) {
+    console.error("Failed to post market images:", error.message);
+    return null;
+  }
+}
+
 export async function editMarket(data: {
   id: number;
   name: string;

@@ -27,7 +27,7 @@ export function DashboardDynamicBreadcrumb() {
           return (
             <BreadcrumbItem key={href}>
               <BreadcrumbLink href={href}>{capitalize(segment)}</BreadcrumbLink>
-              {!isLast && <BreadcrumbSeparator />}
+              {!isLast && <span>/</span>}
             </BreadcrumbItem>
           );
         })}

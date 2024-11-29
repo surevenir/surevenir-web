@@ -10,6 +10,7 @@ import {
   MapPinHouseIcon,
   ShoppingBasketIcon,
   HousePlugIcon,
+  UsersIcon,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -90,6 +91,17 @@ const data = {
         {
           title: "Product Reviews",
           url: "/dashboard/products/reviews",
+        },
+      ],
+    },
+    {
+      title: "Users",
+      url: "/dashboard/products",
+      icon: UsersIcon,
+      items: [
+        {
+          title: "User Details",
+          url: "/dashboard/users",
         },
       ],
     },

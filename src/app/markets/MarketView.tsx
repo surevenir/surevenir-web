@@ -18,6 +18,7 @@ import { useState } from "react";
 type Market = {
   id: number;
   name: string;
+  slug: string;
   description: string;
   longitude: string;
   latitude: string;
@@ -53,7 +54,7 @@ export default function MarketView({
                 </div>
               </div>
               <CardDescription>{market.description}</CardDescription>
-              <Link href={`/markets/${market.id}`}>
+              <Link href={`/markets/${market.slug}`}>
                 <ShinyButton className="inline-block">See Details</ShinyButton>
               </Link>
             </CardHeader>

@@ -33,10 +33,26 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { deleteMarket, postMarket, editMarket } from "@/utils/actions";
+import {
+  deleteMarket,
+  postMarket,
+  editMarket,
+  postMarketImages,
+} from "@/utils/actions";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import TableSkeleton from "@/components/table-skeleton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type Market = {
   id: number;
@@ -61,6 +77,13 @@ const formSchema = z.object({
 });
 type FormData = z.infer<typeof formSchema>;
 
+const formSchemaImages = z.object({
+  id: z.number(),
+  images: z.array(z.instanceof(File)),
+});
+
+type FormDataImages = z.infer<typeof formSchemaImages>;
+
 const mapContainerStyle = {
   width: "100%",
   height: "300px",
@@ -78,6 +101,7 @@ export default function DashboardMarketView({
   const [selectedMarket, setSelectedMarket] = useState<Market | null>(null);
   const [loading, setLoading] = useState(false);
   const [mapCoordinates, setMapCoordinates] = useState(defaultCenter);
+  const [files, setFiles] = useState<File[]>([]);
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
@@ -91,6 +115,10 @@ export default function DashboardMarketView({
       longitude: "",
       latitude: "",
     },
+  });
+
+  const formImages = useForm<FormDataImages>({
+    resolver: zodResolver(formSchemaImages),
   });
 
   const handleMapClick = (event: google.maps.MapMouseEvent) => {
@@ -117,6 +145,70 @@ export default function DashboardMarketView({
     } catch (error: any) {
       console.error("Error adding market:", error.message);
       toast("An error occurred while adding the market.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFileChange = (selectedFiles: File[]) => {
+    // Periksa file apakah memenuhi kriteria (misalnya, ukuran dan tipe file)
+    const validFiles = selectedFiles.filter((file) => {
+      // Contoh validasi ukuran file
+      if (file.size > 10 * 1024 * 1024) {
+        // 10MB limit
+        toast.error("File size exceeds 10MB.");
+        return false;
+      }
+      // Contoh validasi tipe file
+      if (!file.type.startsWith("image/")) {
+        toast.error("Invalid file type. Only image files are allowed.");
+        return false;
+      }
+      return true;
+    });
+
+    setFiles(validFiles);
+  };
+
+  const handleAddImages = async () => {
+    if (!selectedMarket) return; // Ensure a market is selected
+
+    setLoading(true);
+    try {
+      const result = await postMarketImages({
+        id: selectedMarket.id,
+        images: files,
+      });
+
+      if (result) {
+        setMarkets((prev) =>
+          prev.map((market) =>
+            market.id === selectedMarket.id
+              ? { ...market, images: result } // Update market with images
+              : market
+          )
+        );
+        toast.success("Market images added successfully!");
+        setFiles([]); // Reset file input after successful upload
+      } else {
+        toast.error("Failed to add market images. Please try again later.");
+      }
+    } catch (error: any) {
+      // Log the error for debugging
+      console.error("Error adding market images:", error);
+
+      // Log additional details if available
+      if (error.response) {
+        console.error("Response error:", error.response);
+        toast.error(
+          `Error: ${error.response?.data?.message || "Unknown error occurred."}`
+        );
+      } else if (error.message) {
+        console.error("Error message:", error.message);
+        toast.error(`Error: ${error.message}`);
+      } else {
+        toast.error("An unknown error occurred while adding market images.");
+      }
     } finally {
       setLoading(false);
     }
@@ -153,24 +245,24 @@ export default function DashboardMarketView({
     }
   };
 
-  const handleDeleteMarket = async (marketId: number) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this market?"
-    );
-    if (!confirmed) return;
+  const handleDeleteMarket = async () => {
+    if (!selectedMarket) return;
 
     setLoading(true);
     try {
-      const result = await deleteMarket(marketId);
+      const result = await deleteMarket(selectedMarket.id);
       if (result) {
-        setMarkets((prev) => prev.filter((market) => market.id !== marketId));
-        toast("Market deleted successfully!");
+        setMarkets((prev) =>
+          prev.filter((market) => market.id !== selectedMarket.id)
+        );
+        setSelectedMarket(null);
+        toast("Successfully deleted market");
       } else {
-        toast("Failed to delete market. Please try again.");
+        toast("Failed to delete market");
       }
     } catch (error: any) {
       console.error("Error deleting market:", error.message);
-      toast("An error occurred while deleting the market.");
+      toast("An error occurred while deleting the market");
     } finally {
       setLoading(false);
     }
@@ -259,6 +351,7 @@ export default function DashboardMarketView({
               <TableHead>No</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
+              <TableHead>Images</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -270,6 +363,56 @@ export default function DashboardMarketView({
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{market.name}</TableCell>
                 <TableCell>{market.description}</TableCell>
+                <TableCell>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant={"outline"}
+                        onClick={() => {
+                          setSelectedMarket(market);
+                          setFiles([]);
+                          setLoading(false);
+                        }}
+                      >
+                        Add Images
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Add Market Images</DialogTitle>
+                        <DialogDescription>{market.name}</DialogDescription>
+                      </DialogHeader>
+                      <Form {...formImages}>
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            handleAddImages();
+                          }}
+                          className="space-y-4"
+                        >
+                          <Input
+                            type="file"
+                            multiple
+                            onChange={(e) => {
+                              if (e.target.files) {
+                                handleFileChange(Array.from(e.target.files));
+                              }
+                            }}
+                          />
+                          <DialogFooter>
+                            <Button
+                              type="submit"
+                              disabled={loading || files.length === 0}
+                            >
+                              {loading ? "Adding..." : "Add Image"}
+                            </Button>
+                          </DialogFooter>
+                        </form>
+                      </Form>
+                    </DialogContent>
+                  </Dialog>
+                </TableCell>
+
                 <TableCell className="flex gap-2">
                   <Dialog>
                     <DialogTrigger asChild>
@@ -354,12 +497,37 @@ export default function DashboardMarketView({
                       </Form>
                     </DialogContent>
                   </Dialog>
-                  <Button
-                    variant="destructive"
-                    onClick={() => handleDeleteMarket(market.id)}
-                  >
-                    Delete
-                  </Button>
+
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="destructive"
+                        onClick={() => setSelectedMarket(market)}
+                      >
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you sure you want to delete this category?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {`This action will permanently delete the category "${selectedMarket?.name}".`}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel
+                          onClick={() => setSelectedMarket(market)}
+                        >
+                          Cancel
+                        </AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDeleteMarket}>
+                          {loading ? "Deleting..." : "Confirm"}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </TableCell>
               </TableRow>
             ))}
