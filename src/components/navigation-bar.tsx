@@ -3,19 +3,15 @@
 import Image from "next/image";
 import {
   NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-  NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -28,41 +24,76 @@ import { LogoutButton } from "./logout-button";
 import { LogInIcon, MenuIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import ShinyButton from "./ui/shiny-button";
 import { BorderBeam } from "./ui/border-beam";
+import { User } from "@/app/types/types";
+import { getUserById } from "@/utils/userActions";
+
+type Role = "ADMIN" | "USER" | "NOTLOGIN";
 
 export default function NavigationBar() {
-  const navMain = [
-    {
-      title: "Markets",
-      url: "/markets",
-    },
-    {
-      title: "Merchants",
-      url: "/merchants",
-    },
-    {
-      title: "Products",
-      url: "/products",
-    },
-    {
-      title: "Predict",
-      url: "/predict",
-    },
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-    },
-  ];
+  const navMain = {
+    ADMIN: [
+      { title: "Markets", url: "/markets" },
+      { title: "Merchants", url: "/merchants" },
+      { title: "Products", url: "/products" },
+      { title: "Predict", url: "/predict" },
+      { title: "Dashboard", url: "/dashboard" },
+    ],
+    USER: [
+      { title: "Markets", url: "/markets" },
+      { title: "Merchants", url: "/merchants" },
+      { title: "Products", url: "/products" },
+      { title: "Predict", url: "/predict" },
+      { title: "Profile", url: "/profile" },
+    ],
+    NOTLOGIN: [
+      { title: "Markets", url: "/markets" },
+      { title: "Merchants", url: "/merchants" },
+      { title: "Products", url: "/products" },
+      { title: "Predict", url: "/predict" },
+    ],
+  };
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<Role>("NOTLOGIN");
+  const [userId, setUserId] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = Cookies.get("idToken");
-    console.log(token);
+    const tokenFromCookie = Cookies.get("idToken");
+    const userIdFromCookie = Cookies.get("userId");
 
-    setIsLoggedIn(!!token);
+    if (tokenFromCookie && userIdFromCookie) {
+      setIsLoggedIn(true);
+      setUserId(userIdFromCookie);
+      setToken(tokenFromCookie);
+    } else {
+      setIsLoggedIn(false);
+      setRole("NOTLOGIN");
+    }
   }, []);
+
+  useEffect(() => {
+    if (token && userId) {
+      const fetchUserData = async () => {
+        const fetchedUser: any = await getUserById(userId, userId);
+
+        if (fetchedUser) {
+          setUser(fetchedUser);
+          const userRole =
+            fetchedUser.role === "ADMIN" || fetchedUser.role === "USER"
+              ? fetchedUser.role
+              : "NOTLOGIN";
+          setRole(userRole);
+        } else {
+          setRole("NOTLOGIN");
+        }
+      };
+
+      fetchUserData();
+    }
+  }, [token, userId]);
 
   return (
     <>
@@ -76,7 +107,7 @@ export default function NavigationBar() {
             </div>
           </SheetTrigger>
           <SheetContent side={"left"} className="flex justify-start">
-            <SheetHeader className="">
+            <SheetHeader>
               <Link href={"/"}>
                 <SheetTitle className="flex justify-start md:text-xl">
                   Surevenir
@@ -85,17 +116,12 @@ export default function NavigationBar() {
             </SheetHeader>
             <NavigationMenu className="flex justify-center w-full">
               <NavigationMenuList className="flex flex-col gap-6 md:m-0 -ml-8">
-                {navMain.map((item) => (
+                {navMain[role].map((item) => (
                   <NavigationMenuItem
                     key={item.title}
                     className="flex justify-center bg-transparent w-full"
                   >
-                    <Link
-                      href={item.url}
-                      legacyBehavior
-                      passHref
-                      className="bg-red-400"
-                    >
+                    <Link href={item.url} legacyBehavior passHref>
                       <NavigationMenuLink
                         className={`${navigationMenuTriggerStyle()} w-64 md:text-lg`}
                       >
@@ -104,6 +130,16 @@ export default function NavigationBar() {
                     </Link>
                   </NavigationMenuItem>
                 ))}
+                {isLoggedIn ? (
+                  <LogoutButton />
+                ) : (
+                  <Link href={"/auth/login"}>
+                    <RainbowButton className="px-4 text-sm">
+                      Login
+                      <LogInIcon height={15} />
+                    </RainbowButton>
+                  </Link>
+                )}
                 <ModeToggle />
               </NavigationMenuList>
             </NavigationMenu>
@@ -124,7 +160,7 @@ export default function NavigationBar() {
         </Link>
         <NavigationMenu>
           <NavigationMenuList>
-            {navMain.map((item) => (
+            {navMain[role].map((item) => (
               <NavigationMenuItem key={item.title} className="bg-transparent">
                 <Link href={item.url} legacyBehavior passHref>
                   <NavigationMenuLink className={navigationMenuTriggerStyle()}>
@@ -138,9 +174,7 @@ export default function NavigationBar() {
         <div className="flex items-center gap-2">
           <ModeToggle />
           {isLoggedIn ? (
-            <>
-              <LogoutButton />
-            </>
+            <LogoutButton />
           ) : (
             <Link href={"/auth/login"}>
               <RainbowButton className="px-4 text-sm">

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 import { monitorTokenRefresh } from "@/utils/refreshToken";
 import { Toaster } from "@/components/ui/sonner";

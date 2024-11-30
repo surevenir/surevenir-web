@@ -2,7 +2,8 @@
 
 export async function getStatistic(): Promise<any[] | null> {
   try {
-    const host: string = process.env.HOST || "http://localhost:3000";
+    const host: string =
+      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
 
     const token: string = process.env.API_TOKEN || "";
 
@@ -36,86 +37,10 @@ export async function getStatistic(): Promise<any[] | null> {
   }
 }
 
-export async function getUsers(): Promise<any[] | null> {
-  try {
-    const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "";
-
-    if (!token) {
-      throw new Error("Authorization token is missing.");
-    }
-
-    const response = await fetch(`${host}/api/users`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      const errorMessage = `Error fetching users: ${response.status} ${response.statusText}`;
-      throw new Error(errorMessage);
-    }
-
-    const result = await response.json();
-
-    if (result.success && Array.isArray(result.data)) {
-      return result.data;
-    } else {
-      throw new Error("Invalid API response format.");
-    }
-  } catch (error: any) {
-    console.error("Failed to fetch users:", error.message);
-    return null;
-  }
-}
-
-export async function postUser(data: {
-  id: string;
-  full_name: string;
-  username: string;
-  email: string;
-  password: string;
-}): Promise<any | null> {
-  try {
-    const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "";
-
-    if (!token) {
-      throw new Error("Authorization token is missing.");
-    }
-
-    const response = await fetch(`${host}/api/users`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const errorMessage = `Error posting user: ${response.status} ${response.statusText}`;
-      throw new Error(errorMessage);
-    }
-
-    const result = await response.json();
-
-    if (result.success && result.data) {
-      return result.data;
-    } else {
-      throw new Error("Invalid API response format.");
-    }
-  } catch (error: any) {
-    console.error("Failed to post user:", error.message);
-    return null;
-  }
-}
-
 export async function getProducts(): Promise<any[] | null> {
   try {
-    const host: string = process.env.HOST || "http://localhost:3000";
+    const host: string =
+      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
 
     const token: string = process.env.API_TOKEN || "";
 
@@ -151,7 +76,8 @@ export async function getProducts(): Promise<any[] | null> {
 
 export async function getCategories(): Promise<any[] | null> {
   try {
-    const host: string = process.env.HOST || "http://localhost:3000";
+    const host: string =
+      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
 
     const token: string = process.env.API_TOKEN || "";
 
@@ -189,7 +115,8 @@ export async function postCategories(data: {
   name: string;
 }): Promise<any | null> {
   try {
-    const host: string = process.env.HOST || "http://localhost:3000";
+    const host: string =
+      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
     const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
@@ -228,7 +155,8 @@ export async function editCategories(data: {
   name: string;
 }): Promise<any | null> {
   try {
-    const host: string = process.env.HOST || "http://localhost:3000";
+    const host: string =
+      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
     const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
@@ -265,7 +193,8 @@ export async function editCategories(data: {
 
 export async function deleteCategories(id: number): Promise<any | null> {
   try {
-    const host: string = process.env.HOST || "http://localhost:3000";
+    const host: string =
+      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
     const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
@@ -299,215 +228,10 @@ export async function deleteCategories(id: number): Promise<any | null> {
   }
 }
 
-export async function getMarkets(): Promise<any[] | null> {
-  try {
-    const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "";
-
-    if (!token) {
-      throw new Error("Authorization token is missing.");
-    }
-
-    const response = await fetch(`${host}/api/markets`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      const errorMessage = `Error fetching markets: ${response.status} ${response.statusText}`;
-      throw new Error(errorMessage);
-    }
-
-    const result = await response.json();
-
-    if (result.success && Array.isArray(result.data)) {
-      return result.data;
-    } else {
-      throw new Error("Invalid API response format.");
-    }
-  } catch (error: any) {
-    console.error("Failed to fetch markets:", error.message);
-    return null;
-  }
-}
-
-export async function postMarket(data: {
-  name: string;
-  description: string;
-  longitude: string;
-  latitude: string;
-}): Promise<any | null> {
-  try {
-    const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "";
-
-    if (!token) {
-      throw new Error("Authorization token is missing.");
-    }
-
-    const response = await fetch(`${host}/api/markets`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const errorMessage = `Error posting market: ${response.status} ${response.statusText}`;
-      throw new Error(errorMessage);
-    }
-
-    const result = await response.json();
-
-    if (result.success && result.data) {
-      return result.data;
-    } else {
-      throw new Error("Invalid API response format.");
-    }
-  } catch (error: any) {
-    console.error("Failed to post market:", error.message);
-    return null;
-  }
-}
-
-export async function postMarketImages(data: {
-  id: number;
-  images: File[];
-}): Promise<any | null> {
-  try {
-    const host = process.env.HOST || "http://localhost:3000";
-    const token = process.env.API_TOKEN || "";
-
-    // Validasi lebih ketat untuk file
-    const validImages = data.images.filter(
-      (file) => file.type.startsWith("image/") && file.size <= 5 * 1024 * 1024 // max 5MB
-    );
-
-    if (validImages.length === 0) {
-      throw new Error("No valid images provided. Check file types and sizes.");
-    }
-
-    const formData = new FormData();
-    validImages.forEach((image) => {
-      formData.append("images", image);
-    });
-
-    const response = await fetch(`${host}/api/markets/${data.id}/images`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      const errorMessage = `Error posting market images: ${response.status} - ${errorText}`;
-      console.error(errorMessage);
-      throw new Error(errorMessage);
-    }
-
-    const result = await response.json();
-
-    return result.data || null;
-  } catch (error: any) {
-    console.error("Failed to post market images:", error.message);
-    return null;
-  }
-}
-
-export async function editMarket(data: {
-  id: number;
-  name: string;
-  description: string;
-  longitude: string;
-  latitude: string;
-}): Promise<any | null> {
-  try {
-    const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "";
-
-    if (!token) {
-      throw new Error("Authorization token is missing.");
-    }
-
-    // Request PUT ke endpoint dengan ID
-    const response = await fetch(`${host}/api/markets/${data.id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        name: data.name,
-        description: data.description,
-        longitude: data.longitude,
-        latitude: data.latitude,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorMessage = `Error editing market: ${response.status} ${response.statusText}`;
-      throw new Error(errorMessage);
-    }
-
-    const result = await response.json();
-
-    if (result.success) {
-      return result.data;
-    } else {
-      throw new Error("Invalid API response format.");
-    }
-  } catch (error: any) {
-    console.error("Failed to edit market:", error.message);
-    return null;
-  }
-}
-
-export async function deleteMarket(id: number): Promise<any | null> {
-  try {
-    const host: string = process.env.HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "";
-
-    if (!token) {
-      throw new Error("Authorization token is missing.");
-    }
-
-    // Request DELETE ke endpoint dengan ID
-    const response = await fetch(`${host}/api/markets/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      const errorMessage = `Error deleting market: ${response.status} ${response.statusText}`;
-      throw new Error(errorMessage);
-    }
-
-    const result = await response.json();
-
-    if (result.success) {
-      return result.data;
-    } else {
-      throw new Error("Invalid API response format.");
-    }
-  } catch (error: any) {
-    console.error("Failed to delete market:", error.message);
-    return null;
-  }
-}
-
 export async function getMerchants(): Promise<any[] | null> {
   try {
-    const host: string = process.env.HOST || "http://localhost:3000";
+    const host: string =
+      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
     const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
@@ -548,7 +272,8 @@ interface MerchantPayload {
 
 export async function postMerchant(data: MerchantPayload): Promise<any | null> {
   try {
-    const host: string = process.env.HOST || "http://localhost:3000";
+    const host: string =
+      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
     const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
@@ -589,7 +314,8 @@ export async function editMerchant(
   data: MerchantUpdatePayload
 ): Promise<any | null> {
   try {
-    const host: string = process.env.HOST || "http://localhost:3000";
+    const host: string =
+      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
     const token: string = process.env.API_TOKEN || "";
 
     if (!token) {
@@ -629,7 +355,8 @@ export async function editMerchant(
 
 export async function deleteMerchant(id: number): Promise<boolean> {
   try {
-    const host: string = process.env.HOST || "http://localhost:3000";
+    const host: string =
+      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
     const token: string = process.env.API_TOKEN || "";
 
     if (!token) {

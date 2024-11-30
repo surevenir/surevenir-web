@@ -38,7 +38,8 @@ import {
   postMarket,
   editMarket,
   postMarketImages,
-} from "@/utils/actions";
+  getMarkets,
+} from "@/utils/marketActions";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import TableSkeleton from "@/components/table-skeleton";
@@ -53,20 +54,22 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Market } from "@/app/types/types";
+import { deleteImage } from "@/utils/imageActions";
+import Cookies from "js-cookie";
 
-type Market = {
-  id: number;
+interface MarketRequest {
   name: string;
   description: string;
   longitude: string;
   latitude: string;
-};
+  image: File;
+}
 
 interface MarketViewProps {
   markets: Market[] | [];
 }
 
-// Schema untuk validasi form
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   description: z
@@ -74,7 +77,9 @@ const formSchema = z.object({
     .min(2, { message: "Description must be at least 2 characters." }),
   longitude: z.string().nonempty({ message: "Longitude is required." }),
   latitude: z.string().nonempty({ message: "Latitude is required." }),
+  image: z.instanceof(File).optional(),
 });
+
 type FormData = z.infer<typeof formSchema>;
 
 const formSchemaImages = z.object({
@@ -90,8 +95,8 @@ const mapContainerStyle = {
 };
 
 const defaultCenter = {
-  lat: -8.65,
-  lng: 115.216,
+  lat: -8.510014814449596,
+  lng: 115.25923437673299,
 };
 
 export default function DashboardMarketView({
@@ -102,6 +107,8 @@ export default function DashboardMarketView({
   const [loading, setLoading] = useState(false);
   const [mapCoordinates, setMapCoordinates] = useState(defaultCenter);
   const [files, setFiles] = useState<File[]>([]);
+  const [file, setFile] = useState<File>();
+  const token = Cookies.get("userId");
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
@@ -110,16 +117,25 @@ export default function DashboardMarketView({
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      longitude: "",
-      latitude: "",
+      name: selectedMarket?.name || "",
+      description: selectedMarket?.description || "",
+      longitude: selectedMarket?.longitude || "",
+      latitude: selectedMarket?.latitude || "",
     },
   });
 
   const formImages = useForm<FormDataImages>({
     resolver: zodResolver(formSchemaImages),
   });
+
+  const fetchMarkets = async () => {
+    try {
+      const data = await getMarkets();
+      setMarkets(data || []);
+    } catch (error: any) {
+      console.error("Error fetching markets:", error.message);
+    }
+  };
 
   const handleMapClick = (event: google.maps.MapMouseEvent) => {
     const lat = event.latLng?.lat();
@@ -133,33 +149,51 @@ export default function DashboardMarketView({
 
   const handleAddMarket = async (data: FormData) => {
     setLoading(true);
+    console.log("market", data);
+
+    if (!file) {
+      toast.error("Please select a valid image file.");
+      setLoading(false);
+      return;
+    }
+
+    if (file.size > 3 * 1024 * 1024) {
+      toast.error("File size exceeds 3MB.");
+      setLoading(false);
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Invalid file type. Only image files are allowed.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const result = await postMarket(data);
-      if (result) {
-        setMarkets((prev) => [...prev, result]);
-        toast("Market added successfully!");
-        form.reset();
-      } else {
-        toast("Failed to add market. Please try again.");
-      }
+      const result = await postMarket({ ...data, image: file });
+
+      console.log(result);
+
+      toast.success("Market added successfully!");
+      form.reset();
+      setFile(undefined);
+      await fetchMarkets();
     } catch (error: any) {
       console.error("Error adding market:", error.message);
-      toast("An error occurred while adding the market.");
+      toast.error(
+        error.message || "An error occurred while adding the market."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   const handleFileChange = (selectedFiles: File[]) => {
-    // Periksa file apakah memenuhi kriteria (misalnya, ukuran dan tipe file)
     const validFiles = selectedFiles.filter((file) => {
-      // Contoh validasi ukuran file
-      if (file.size > 10 * 1024 * 1024) {
-        // 10MB limit
-        toast.error("File size exceeds 10MB.");
+      if (file.size > 3 * 1024 * 1024) {
+        toast.error("File size exceeds 3MB.");
         return false;
       }
-      // Contoh validasi tipe file
       if (!file.type.startsWith("image/")) {
         toast.error("Invalid file type. Only image files are allowed.");
         return false;
@@ -170,8 +204,21 @@ export default function DashboardMarketView({
     setFiles(validFiles);
   };
 
+  const handleSingleFileChange = (selectedFile: File) => {
+    if (selectedFile.size > 3 * 1024 * 1024) {
+      toast.error("File size exceeds 3MB.");
+      return false;
+    }
+    if (!selectedFile.type.startsWith("image/")) {
+      toast.error("Invalid file type. Only image files are allowed.");
+      return false;
+    }
+    setFile(selectedFile);
+    return true;
+  };
+
   const handleAddImages = async () => {
-    if (!selectedMarket) return; // Ensure a market is selected
+    if (!selectedMarket) return;
 
     setLoading(true);
     try {
@@ -184,20 +231,19 @@ export default function DashboardMarketView({
         setMarkets((prev) =>
           prev.map((market) =>
             market.id === selectedMarket.id
-              ? { ...market, images: result } // Update market with images
+              ? { ...market, images: result }
               : market
           )
         );
         toast.success("Market images added successfully!");
-        setFiles([]); // Reset file input after successful upload
+        setFiles([]);
+        await fetchMarkets();
       } else {
         toast.error("Failed to add market images. Please try again later.");
       }
     } catch (error: any) {
-      // Log the error for debugging
       console.error("Error adding market images:", error);
 
-      // Log additional details if available
       if (error.response) {
         console.error("Response error:", error.response);
         toast.error(
@@ -218,28 +264,52 @@ export default function DashboardMarketView({
     if (!selectedMarket) return;
 
     setLoading(true);
+    console.log("Editing market with data:", data);
+
+    // Validasi file gambar jika ada
+    const file = data.image as File | null;
+
+    if (file && file.size > 3 * 1024 * 1024) {
+      toast.error("File size exceeds 3MB.");
+      setLoading(false);
+      return;
+    }
+
+    if (file && !file.type.startsWith("image/")) {
+      toast.error("Invalid file type. Only image files are allowed.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const result = await editMarket({
+      const updatedMarket = {
         id: selectedMarket.id,
-        name: data.name,
-        description: data.description,
-        longitude: data.longitude,
-        latitude: data.latitude,
-      });
+        name: data.name as string,
+        description: data.description as string,
+        longitude: data.longitude as string,
+        latitude: data.latitude as string,
+        image: file ? file : undefined,
+      };
+
+      const result = await editMarket(updatedMarket);
+
       if (result) {
         setMarkets((prev) =>
           prev.map((market) =>
-            market.id === selectedMarket.id ? { ...market, ...data } : market
+            market.id === selectedMarket.id
+              ? { ...market, ...updatedMarket }
+              : market
           )
         );
-        toast("Market updated successfully!");
+        toast.success("Market updated successfully!");
         setSelectedMarket(null);
+        await fetchMarkets();
       } else {
-        toast("Failed to update market. Please try again.");
+        toast.error("Failed to update market. Please try again.");
       }
     } catch (error: any) {
       console.error("Error updating market:", error.message);
-      toast("An error occurred while updating the market.");
+      toast.error("An error occurred while updating the market.");
     } finally {
       setLoading(false);
     }
@@ -255,8 +325,9 @@ export default function DashboardMarketView({
         setMarkets((prev) =>
           prev.filter((market) => market.id !== selectedMarket.id)
         );
-        setSelectedMarket(null);
         toast("Successfully deleted market");
+        setSelectedMarket(null);
+        await fetchMarkets();
       } else {
         toast("Failed to delete market");
       }
@@ -268,13 +339,45 @@ export default function DashboardMarketView({
     }
   };
 
+  const handleDeleteImage = async (url: string) => {
+    setLoading(true);
+    try {
+      const result = await deleteImage(url, token as string);
+
+      console.log("result :", result);
+
+      if (result) {
+        toast("Successfully deleted image");
+        await fetchMarkets();
+      } else {
+        toast("Failed to delete image");
+      }
+    } catch (error: any) {
+      console.error("Error deleting image:", error.message);
+      toast("An error occurred while deleting the image");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="px-8">
       <div className="flex justify-between mb-4">
         <h3 className="font-semibold text-xl">Market List</h3>
         <Dialog>
           <DialogTrigger asChild>
-            <Button>Add Market</Button>
+            <Button
+              onClick={() =>
+                form.reset({
+                  name: "",
+                  description: "",
+                  longitude: defaultCenter.lng.toString(),
+                  latitude: defaultCenter.lat.toString(),
+                })
+              }
+            >
+              Add Market
+            </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
@@ -286,8 +389,8 @@ export default function DashboardMarketView({
             </DialogHeader>
             <Form {...form}>
               <form
-                onSubmit={form.handleSubmit(handleAddMarket)}
                 className="space-y-4"
+                onSubmit={form.handleSubmit(handleAddMarket)}
               >
                 <FormField
                   control={form.control}
@@ -302,6 +405,7 @@ export default function DashboardMarketView({
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="description"
@@ -318,6 +422,38 @@ export default function DashboardMarketView({
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="image"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Image</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          required
+                          onChange={(e) => {
+                            const selectedFile = e.target.files
+                              ? e.target.files[0]
+                              : null;
+                            if (selectedFile) {
+                              const isValid =
+                                handleSingleFileChange(selectedFile);
+                              if (isValid) {
+                                form.setValue("image", selectedFile);
+                              } else {
+                                form.setValue("image", undefined);
+                              }
+                            }
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <div className="border rounded w-full h-[300px]">
                   <GoogleMap
                     mapContainerStyle={mapContainerStyle}
@@ -328,6 +464,7 @@ export default function DashboardMarketView({
                     <Marker position={mapCoordinates} />
                   </GoogleMap>
                 </div>
+
                 <DialogFooter>
                   <Button type="submit" disabled={loading}>
                     {loading ? "Adding..." : "Add Market"}
@@ -339,9 +476,9 @@ export default function DashboardMarketView({
         </Dialog>
       </div>
 
-      {!isLoaded && <TableSkeleton />}
+      {loading && <TableSkeleton />}
 
-      {isLoaded && (
+      {!loading && isLoaded && (
         <Table>
           <TableCaption>
             {markets.length != 0 ? "Markets List" : "No Markets Found"}
@@ -359,7 +496,7 @@ export default function DashboardMarketView({
 
           <TableBody>
             {markets.map((market, index) => (
-              <TableRow key={market.id}>
+              <TableRow key={market.slug}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{market.name}</TableCell>
                 <TableCell>{market.description}</TableCell>
@@ -374,41 +511,96 @@ export default function DashboardMarketView({
                           setLoading(false);
                         }}
                       >
-                        Add Images
+                        Images
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>Add Market Images</DialogTitle>
-                        <DialogDescription>{market.name}</DialogDescription>
-                      </DialogHeader>
-                      <Form {...formImages}>
-                        <form
-                          onSubmit={(e) => {
-                            e.preventDefault();
-                            handleAddImages();
-                          }}
-                          className="space-y-4"
-                        >
-                          <Input
-                            type="file"
-                            multiple
-                            onChange={(e) => {
-                              if (e.target.files) {
-                                handleFileChange(Array.from(e.target.files));
-                              }
-                            }}
-                          />
-                          <DialogFooter>
-                            <Button
-                              type="submit"
-                              disabled={loading || files.length === 0}
+
+                    <DialogContent className="w-2/3">
+                      <div className="flex flex-col gap-8">
+                        <div className="flex flex-col gap-4">
+                          <DialogHeader>
+                            <DialogTitle>Market Images</DialogTitle>
+                            <DialogDescription>{market.name}</DialogDescription>
+                          </DialogHeader>
+                          <Form {...formImages}>
+                            <form
+                              onSubmit={(e) => {
+                                e.preventDefault();
+                                handleAddImages();
+                              }}
+                              className="space-y-4"
                             >
-                              {loading ? "Adding..." : "Add Image"}
-                            </Button>
-                          </DialogFooter>
-                        </form>
-                      </Form>
+                              <Input
+                                type="file"
+                                multiple
+                                onChange={(e) => {
+                                  if (e.target.files) {
+                                    handleFileChange(
+                                      Array.from(e.target.files)
+                                    );
+                                  }
+                                }}
+                              />
+                              <DialogFooter>
+                                <Button
+                                  type="submit"
+                                  disabled={loading || files.length === 0}
+                                >
+                                  {loading ? "Adding..." : "Add Image"}
+                                </Button>
+                              </DialogFooter>
+                            </form>
+                          </Form>
+                        </div>
+                        <div className="gap-4 grid grid-cols-3 grid-flow-row">
+                          {market.images?.map((image) => (
+                            <div
+                              className="flex flex-col gap-4 w-32 h-full object-fill"
+                              key={image.id}
+                            >
+                              <img
+                                src={image.url}
+                                className="w-full"
+                                alt={market.name}
+                              />
+
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    variant={"destructive"}
+                                    disabled={loading}
+                                  >
+                                    {loading ? "Deleting..." : "Delete Image"}
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>
+                                      Are you sure you want to delete this
+                                      image?
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      {`This action will permanently delete the image`}
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>
+                                      Cancel
+                                    </AlertDialogCancel>
+                                    <AlertDialogAction
+                                      onClick={() =>
+                                        handleDeleteImage(image.url)
+                                      }
+                                    >
+                                      {loading ? "Deleting..." : "Confirm"}
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </DialogContent>
                   </Dialog>
                 </TableCell>
@@ -462,6 +654,7 @@ export default function DashboardMarketView({
                               </FormItem>
                             )}
                           />
+
                           <FormField
                             control={form.control}
                             name="description"
@@ -478,6 +671,45 @@ export default function DashboardMarketView({
                               </FormItem>
                             )}
                           />
+
+                          {market.profile_image_url && (
+                            <img
+                              src={market.profile_image_url}
+                              alt={market.name}
+                              className="rounded-md w-16"
+                            />
+                          )}
+
+                          <FormField
+                            control={form.control}
+                            name="image"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Image</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="file"
+                                    onChange={(e) => {
+                                      const selectedFile = e.target.files
+                                        ? e.target.files[0]
+                                        : null;
+                                      if (selectedFile) {
+                                        const isValid =
+                                          handleSingleFileChange(selectedFile);
+                                        if (isValid) {
+                                          form.setValue("image", selectedFile);
+                                        } else {
+                                          form.setValue("image", undefined);
+                                        }
+                                      }
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
                           <div className="border rounded w-full h-[300px]">
                             <GoogleMap
                               mapContainerStyle={mapContainerStyle}

@@ -23,6 +23,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
+import Cookies from "js-cookie";
 
 const data = {
   profile: {
@@ -137,6 +138,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const token = Cookies.get("idToken");
+  const userId = Cookies.get("userId");
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>

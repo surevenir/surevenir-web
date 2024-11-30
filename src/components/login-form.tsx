@@ -16,7 +16,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { auth } from "@/lib/firebaseConfig";
-import { postUser } from "@/utils/actions";
+import Cookies from "js-cookie";
+import ShinyButton from "./ui/shiny-button";
+import { ArrowLeftIcon } from "lucide-react";
 
 export function LoginForm() {
   const router = useRouter();
@@ -38,13 +40,23 @@ export function LoginForm() {
       );
 
       const idToken = await userCredential.user.getIdToken();
+      const userId = userCredential.user.uid;
 
-      // Simpan token di cookie
-      if (typeof window !== "undefined") {
-        document.cookie = `idToken=${idToken}; path=/; Secure; SameSite=Strict;`;
-      }
+      // Simpan token dan userId di cookies menggunakan js-cookie
+      Cookies.set("idToken", idToken, {
+        expires: 7,
+        path: "/",
+        secure: true,
+        sameSite: "Strict",
+      });
+      Cookies.set("userId", userId, {
+        expires: 7,
+        path: "/",
+        secure: true,
+        sameSite: "Strict",
+      });
 
-      // Redirect to dashboard or home
+      // Redirect ke dashboard atau halaman lain
       toast("Welcome to Dashboard");
       router.push("/dashboard");
     } catch (err: any) {
@@ -57,6 +69,14 @@ export function LoginForm() {
 
   return (
     <>
+      <div className="top-4 left-4 fixed">
+        <ShinyButton onClick={() => router.push("/")}>
+          <div className="flex justify-between items-center gap-4">
+            <ArrowLeftIcon width={15} />
+            Home
+          </div>
+        </ShinyButton>
+      </div>
       <Card className="mx-auto max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>

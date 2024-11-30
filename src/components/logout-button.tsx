@@ -5,6 +5,7 @@ import { auth } from "@/lib/firebaseConfig";
 import { signOut } from "firebase/auth";
 import { LogOut } from "lucide-react";
 import { RainbowButton } from "./ui/rainbow-button";
+import Cookies from "js-cookie";
 
 export function LogoutButton() {
   const router = useRouter();
@@ -14,9 +15,9 @@ export function LogoutButton() {
       // Logout dari Firebase
       await signOut(auth);
 
-      // Hapus cookie token
-      document.cookie =
-        "idToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      // Hapus cookie menggunakan js-cookie
+      Cookies.remove("idToken");
+      Cookies.remove("userId");
 
       // Redirect ke halaman login
       router.push("/auth/login");

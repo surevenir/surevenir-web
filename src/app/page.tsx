@@ -44,7 +44,7 @@ export default function HomePage() {
                 `inline animate-gradient bg-gradient-to-r from-[#ffaa40] via-[#9c40ff] to-[#ffaa40] bg-[length:var(--bg-size)_100%] bg-clip-text text-transparent`
               )}
             >
-              Introducing SureVenir
+              Introducing
             </span>
             <ChevronRight className="ml-1 transition-transform group-hover:translate-x-0.5 duration-300 ease-in-out size-3" />
           </AnimatedGradientText>
