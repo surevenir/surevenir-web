@@ -32,6 +32,25 @@ export default function HomePage() {
     setColor(resolvedTheme === "dark" ? "#ffffff" : "#000000");
   }, [resolvedTheme]);
 
+  // Dynamically load Dialogflow Messenger
+  useEffect(() => {
+    const loadDialogflow = () => {
+      const script = document.createElement("script");
+      script.src =
+        "https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/df-messenger.js";
+      script.async = true;
+      document.body.appendChild(script);
+
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href =
+        "https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/themes/df-messenger-default.css";
+      document.head.appendChild(link);
+    };
+
+    loadDialogflow();
+  }, []);
+
   return (
     <>
       <NavigationBar />
@@ -121,6 +140,23 @@ export default function HomePage() {
         color={color}
         refresh
       />
+
+      {/* Dialogflow Chatbot */}
+      <div className="right-4 bottom-4 z-50 fixed mt-12">
+        <div
+          dangerouslySetInnerHTML={{
+            __html: `
+          <df-messenger
+          project-id="submission-mgce-juniawan"
+          agent-id="e5dc7f79-4500-4abf-a75c-ef9fcb1cecb9"
+          language-code="en"
+          max-query-length="-1">
+          <df-messenger-chat-bubble chat-title="SureVenir-Agent"></df-messenger-chat-bubble>
+          </df-messenger>
+          `,
+          }}
+        />
+      </div>
     </>
   );
 }

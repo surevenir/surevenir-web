@@ -63,7 +63,7 @@ const data = {
     },
     {
       title: "Merchants",
-      url: "#",
+      url: "/dashboard/merchants",
       icon: HousePlugIcon,
       items: [
         {
