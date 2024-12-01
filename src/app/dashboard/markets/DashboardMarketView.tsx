@@ -143,29 +143,8 @@ export default function DashboardMarketView({
     setLoading(true);
     console.log("market", data);
 
-    if (!file) {
-      toast.error("Please select a valid image file.");
-      setLoading(false);
-      return;
-    }
-
-    if (file.size > 3 * 1024 * 1024) {
-      toast.error("File size exceeds 3MB.");
-      setLoading(false);
-      return;
-    }
-
-    if (!file.type.startsWith("image/")) {
-      toast.error("Invalid file type. Only image files are allowed.");
-      setLoading(false);
-      return;
-    }
-
     try {
-      const result = await postMarket({ ...data, image: file });
-
-      console.log(result);
-
+      const result = await postMarket(data);
       toast.success("Market added successfully!");
       form.reset();
       setFile(undefined);
@@ -280,19 +259,12 @@ export default function DashboardMarketView({
         description: data.description as string,
         longitude: data.longitude as string,
         latitude: data.latitude as string,
-        image: file ? file : undefined,
+        image: data.image ? data.image : undefined,
       };
 
       const result = await editMarket(updatedMarket);
 
       if (result) {
-        setMarkets((prev) =>
-          prev.map((market) =>
-            market.id === selectedMarket.id
-              ? { ...market, ...updatedMarket }
-              : market
-          )
-        );
         toast.success("Market updated successfully!");
         setSelectedMarket(null);
         await fetchMarkets();
@@ -314,9 +286,6 @@ export default function DashboardMarketView({
     try {
       const result = await deleteMarket(selectedMarket.id);
       if (result) {
-        setMarkets((prev) =>
-          prev.filter((market) => market.id !== selectedMarket.id)
-        );
         toast("Successfully deleted market");
         setSelectedMarket(null);
         await fetchMarkets();
@@ -434,8 +403,6 @@ export default function DashboardMarketView({
                                 handleSingleFileChange(selectedFile);
                               if (isValid) {
                                 form.setValue("image", selectedFile);
-                              } else {
-                                form.setValue("image", undefined);
                               }
                             }
                           }}
@@ -690,8 +657,6 @@ export default function DashboardMarketView({
                                           handleSingleFileChange(selectedFile);
                                         if (isValid) {
                                           form.setValue("image", selectedFile);
-                                        } else {
-                                          form.setValue("image", undefined);
                                         }
                                       }
                                     }}

@@ -16,6 +16,9 @@ export default function TableSkeleton() {
         <Skeleton className="w-full h-8" />
         <Skeleton className="w-full h-8" />
         <Skeleton className="w-full h-8" />
+        <Skeleton className="w-full h-8" />
+        <Skeleton className="w-full h-8" />
+        <Skeleton className="w-full h-8" />
       </div>
     </>
   );

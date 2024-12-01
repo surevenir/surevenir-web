@@ -52,3 +52,11 @@ export type Merchant = {
   updatedAt: string | null;
   images: Image[] | null;
 };
+
+export type Category = {
+  id: number;
+  name: string;
+  description: string;
+  image_url: string;
+  range_price: string;
+};

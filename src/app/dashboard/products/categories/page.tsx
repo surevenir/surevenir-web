@@ -1,14 +1,14 @@
 "use server";
 
-import { getCategories } from "@/utils/actions";
+import { getCategories } from "@/utils/categoryActions";
 import DashboardProductCategoryView from "./DashboardProductCategoryView";
 
 export default async function ProductPage() {
-  const categories = await getCategories();
+  const categories = (await getCategories()) || [];
 
   return (
     <>
-      {categories && <DashboardProductCategoryView categories={categories} />}
+      <DashboardProductCategoryView categories={categories} />
     </>
   );
 }
