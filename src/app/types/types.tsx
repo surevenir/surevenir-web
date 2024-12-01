@@ -36,3 +36,19 @@ export type Market = {
   updatedAt: string | null;
   images: Image[] | null;
 };
+
+export type Merchant = {
+  id: number;
+  slug: string | null;
+  name: string;
+  description: string;
+  profile_image_url: string | null;
+  addresses: string;
+  longitude: string;
+  latitude: string;
+  user_id: string;
+  market_id: number;
+  createdAt: string | null;
+  updatedAt: string | null;
+  images: Image[] | null;
+};

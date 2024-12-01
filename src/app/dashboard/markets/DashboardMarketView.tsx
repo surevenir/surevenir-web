@@ -58,14 +58,6 @@ import { Market } from "@/app/types/types";
 import { deleteImage } from "@/utils/imageActions";
 import Cookies from "js-cookie";
 
-interface MarketRequest {
-  name: string;
-  description: string;
-  longitude: string;
-  latitude: string;
-  image: File;
-}
-
 interface MarketViewProps {
   markets: Market[] | [];
 }
@@ -511,7 +503,7 @@ export default function DashboardMarketView({
                           setLoading(false);
                         }}
                       >
-                        Images
+                        {market.images?.length || 0}
                       </Button>
                     </DialogTrigger>
 

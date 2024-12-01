@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  deleteUser,
+} from "firebase/auth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,8 +23,11 @@ import { toast } from "sonner";
 import { postUser } from "@/utils/userActions";
 import ShinyButton from "./ui/shiny-button";
 import { ArrowLeftIcon } from "lucide-react";
+import crypto from "crypto";
+import dotenv from "dotenv";
 
 export function RegisterForm() {
+  dotenv.config();
   const router = useRouter();
   const [fullname, setFullname] = useState("");
   const [username, setUsername] = useState("");
@@ -29,20 +36,44 @@ export function RegisterForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const encryptPassword = (password: string): string => {
+    // Mengambil key dari env
+    const key = process.env.NEXT_PUBLIC_PASSWORD_KEY;
+
+    if (!key) {
+      throw new Error("PASSWORD_KEY is not defined");
+    }
+
+    // Hash key menjadi panjang 32 byte dengan SHA-256
+    const hashedKey = crypto.createHash("sha256").update(key).digest();
+
+    const algorithm = "aes-256-ctr";
+    const iv = crypto.randomBytes(16); // Inisialisasi vector acak
+    const cipher = crypto.createCipheriv(algorithm, hashedKey, iv);
+    let encrypted = cipher.update(password, "utf8", "hex");
+    encrypted += cipher.final("hex");
+
+    return `${iv.toString("hex")}:${encrypted}`;
+  };
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
+    let userCredential = null;
     try {
-      // Firebase Authentication
-      const userCredential = await createUserWithEmailAndPassword(
+      // Mendaftar ke Firebase menggunakan password plain text
+      userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
-      // Update display name
+      // Update display name di Firebase
       await updateProfile(userCredential.user, { displayName: username });
+
+      // Enkripsi password sebelum menyimpan ke database
+      const encryptedPassword = encryptPassword(password);
 
       const idUser = userCredential.user.uid;
 
@@ -51,10 +82,12 @@ export function RegisterForm() {
         full_name: fullname,
         username,
         email,
-        password,
+        password: encryptedPassword,
       };
 
       const result = await postUser(userData);
+
+      console.log("result: " + JSON.stringify(result));
 
       if (userCredential && result) {
         toast.success("User registered successfully!");
@@ -66,6 +99,19 @@ export function RegisterForm() {
       console.error("Error during registration:", err.message);
       setError(err.message || "Something went wrong. Please try again.");
       toast.error(err.message || "Registration failed.");
+
+      // Jika ada error dan userCredential sudah ada, hapus user yang baru terdaftar di Firebase
+      if (userCredential) {
+        try {
+          await deleteUser(userCredential.user); // Menghapus user dari Firebase
+        } catch (deleteError: any) {
+          console.error("Failed to delete Firebase user:", deleteError.message);
+        }
+      }
+
+      // Batalkan kedua proses jika salah satu gagal
+      setLoading(false);
+      return;
     } finally {
       setLoading(false);
     }

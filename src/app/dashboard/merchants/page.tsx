@@ -1,13 +1,16 @@
 "use server";
 
-import { getMerchants } from "@/utils/actions";
+import { getMerchants } from "@/utils/merchantActions";
+import DashboardMerchantView from "./DashboardMerchantView";
+import { getMarkets } from "@/utils/marketActions";
 
 export default async function DashboardMerchantsPage() {
   const merchants = (await getMerchants()) || [];
+  const markets = (await getMarkets()) || [];
 
   return (
     <>
-      <h1>hello</h1>
+      <DashboardMerchantView merchants={merchants} markets={markets} />
     </>
   );
 }

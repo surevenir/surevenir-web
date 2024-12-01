@@ -5,7 +5,7 @@ export async function getStatistic(): Promise<any[] | null> {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
 
-    const token: string = process.env.API_TOKEN || "";
+    const token: string = process.env.NEXT_PUBLIC_API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -42,7 +42,7 @@ export async function getProducts(): Promise<any[] | null> {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
 
-    const token: string = process.env.API_TOKEN || "";
+    const token: string = process.env.NEXT_PUBLIC_API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -79,7 +79,7 @@ export async function getCategories(): Promise<any[] | null> {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
 
-    const token: string = process.env.API_TOKEN || "";
+    const token: string = process.env.NEXT_PUBLIC_API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -117,7 +117,7 @@ export async function postCategories(data: {
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "";
+    const token: string = process.env.NEXT_PUBLIC_API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -157,7 +157,7 @@ export async function editCategories(data: {
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "";
+    const token: string = process.env.NEXT_PUBLIC_API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -195,7 +195,7 @@ export async function deleteCategories(id: number): Promise<any | null> {
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "";
+    const token: string = process.env.NEXT_PUBLIC_API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -225,164 +225,5 @@ export async function deleteCategories(id: number): Promise<any | null> {
   } catch (error: any) {
     console.error("Failed to delete category:", error.message);
     return null;
-  }
-}
-
-export async function getMerchants(): Promise<any[] | null> {
-  try {
-    const host: string =
-      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "";
-
-    if (!token) {
-      throw new Error("Authorization token is missing.");
-    }
-
-    const response = await fetch(`${host}/api/merchants`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error fetching merchants: ${response.statusText}`);
-    }
-
-    const result = await response.json();
-
-    if (result.success && Array.isArray(result.data)) {
-      return result.data;
-    }
-
-    throw new Error("Invalid API response format.");
-  } catch (error: any) {
-    console.error("Failed to fetch merchants:", error.message);
-    return null;
-  }
-}
-
-interface MerchantPayload {
-  name: string;
-  description: string;
-  longitude: string;
-  latitude: string;
-}
-
-export async function postMerchant(data: MerchantPayload): Promise<any | null> {
-  try {
-    const host: string =
-      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "";
-
-    if (!token) {
-      throw new Error("Authorization token is missing.");
-    }
-
-    const response = await fetch(`${host}/api/merchants`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error creating merchant: ${response.statusText}`);
-    }
-
-    const result = await response.json();
-
-    if (result.success) {
-      return result.data;
-    }
-
-    throw new Error("Invalid API response format.");
-  } catch (error: any) {
-    console.error("Failed to create merchant:", error.message);
-    return null;
-  }
-}
-
-interface MerchantUpdatePayload extends MerchantPayload {
-  id: number;
-}
-
-export async function editMerchant(
-  data: MerchantUpdatePayload
-): Promise<any | null> {
-  try {
-    const host: string =
-      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "";
-
-    if (!token) {
-      throw new Error("Authorization token is missing.");
-    }
-
-    const response = await fetch(`${host}/api/merchants/${data.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        name: data.name,
-        description: data.description,
-        longitude: data.longitude,
-        latitude: data.latitude,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error updating merchant: ${response.statusText}`);
-    }
-
-    const result = await response.json();
-
-    if (result.success) {
-      return result.data;
-    }
-
-    throw new Error("Invalid API response format.");
-  } catch (error: any) {
-    console.error("Failed to update merchant:", error.message);
-    return null;
-  }
-}
-
-export async function deleteMerchant(id: number): Promise<boolean> {
-  try {
-    const host: string =
-      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
-    const token: string = process.env.API_TOKEN || "";
-
-    if (!token) {
-      throw new Error("Authorization token is missing.");
-    }
-
-    const response = await fetch(`${host}/api/merchants/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Error deleting merchant: ${response.statusText}`);
-    }
-
-    const result = await response.json();
-
-    if (result.success) {
-      return true;
-    }
-
-    throw new Error("Invalid API response format.");
-  } catch (error: any) {
-    console.error("Failed to delete merchant:", error.message);
-    return false;
   }
 }

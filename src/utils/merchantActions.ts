@@ -1,6 +1,6 @@
 "use server";
 
-export async function getMarkets(): Promise<any[] | null> {
+export async function getMerchants(): Promise<any[] | null> {
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
@@ -10,7 +10,7 @@ export async function getMarkets(): Promise<any[] | null> {
       throw new Error("Authorization token is missing.");
     }
 
-    const response = await fetch(`${host}/api/markets`, {
+    const response = await fetch(`${host}/api/merchants`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -19,7 +19,7 @@ export async function getMarkets(): Promise<any[] | null> {
     });
 
     if (!response.ok) {
-      const errorMessage = `Error fetching markets: ${response.status} ${response.statusText}`;
+      const errorMessage = `Error fetching merchants: ${response.status} ${response.statusText}`;
       throw new Error(errorMessage);
     }
 
@@ -31,14 +31,17 @@ export async function getMarkets(): Promise<any[] | null> {
       throw new Error("Invalid API response format.");
     }
   } catch (error: any) {
-    console.error("Failed to fetch markets:", error.message);
+    console.error("Failed to fetch merchants:", error.message);
     return null;
   }
 }
 
-export async function postMarket(data: {
+export async function postMerchant(data: {
   name: string;
   description: string;
+  addresses?: string;
+  userId: string;
+  marketId?: string;
   longitude: string;
   latitude: string;
   image: File;
@@ -55,21 +58,17 @@ export async function postMarket(data: {
       throw new Error("Authorization token is missing.");
     }
 
-    // Validasi image sebelum memasukkan ke FormData
     if (!data.image) {
       console.error("No file selected.");
       throw new Error("No file selected.");
     }
 
-    // Validasi tipe file (harus berupa image)
     if (!data.image.type.startsWith("image/")) {
       console.error("Invalid file type. Only image files are allowed.");
       throw new Error("Invalid file type. Only image files are allowed.");
     }
 
-    // Validasi ukuran file (maksimal 3MB)
     if (data.image.size > 3 * 1024 * 1024) {
-      // 3MB limit
       console.error("File size exceeds 3MB.");
       throw new Error("File size exceeds 3MB.");
     }
@@ -77,11 +76,21 @@ export async function postMarket(data: {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("description", data.description);
+
+    if (data.addresses) {
+      formData.append("addresses", data.addresses);
+    }
+
+    if (data.marketId) {
+      formData.append("market_id", data.marketId);
+    }
+
+    formData.append("user_id", data.userId);
     formData.append("longitude", data.longitude);
     formData.append("latitude", data.latitude);
     formData.append("image", data.image);
 
-    const response = await fetch(`${host}/api/markets`, {
+    const response = await fetch(`${host}/api/merchants`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -98,12 +107,12 @@ export async function postMarket(data: {
     const result = await response.json();
     return result;
   } catch (error: any) {
-    console.error("Failed to post market:", error.message);
-    throw error; // Re-throw error untuk handling di komponen
+    console.error("Failed to post merchant:", error.message);
+    throw error;
   }
 }
 
-export async function postMarketImages(data: {
+export async function postMerchantImages(data: {
   id: number;
   images: File[];
 }): Promise<any | null> {
@@ -125,7 +134,7 @@ export async function postMarketImages(data: {
       formData.append("images", image);
     });
 
-    const response = await fetch(`${host}/api/markets/${data.id}/images`, {
+    const response = await fetch(`${host}/api/merchants/${data.id}/images`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -135,7 +144,7 @@ export async function postMarketImages(data: {
 
     if (!response.ok) {
       const errorText = await response.text();
-      const errorMessage = `Error posting market images: ${response.status} - ${errorText}`;
+      const errorMessage = `Error posting merchant images: ${response.status} - ${errorText}`;
       console.error(errorMessage);
       throw new Error(errorMessage);
     }
@@ -144,18 +153,21 @@ export async function postMarketImages(data: {
 
     return result.data || null;
   } catch (error: any) {
-    console.error("Failed to post market images:", error.message);
+    console.error("Failed to post merchant images:", error.message);
     return null;
   }
 }
 
-export async function editMarket(data: {
+export async function editMerchant(data: {
   id: number;
   name: string;
   description: string;
+  addresses: string;
+  userId: string;
+  marketId?: string | null;
   longitude: string;
   latitude: string;
-  image?: File;
+  image?: File | null;
 }): Promise<any | null> {
   console.log(data);
 
@@ -172,10 +184,15 @@ export async function editMarket(data: {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("description", data.description);
+    formData.append("addresses", data.addresses);
+    formData.append("user_id", data.userId);
     formData.append("longitude", data.longitude);
     formData.append("latitude", data.latitude);
 
-    // Jika ada gambar, validasi dan tambahkan ke FormData
+    if (data.marketId) {
+      formData.append("market_id", data.marketId);
+    }
+
     if (data.image) {
       if (!data.image.type.startsWith("image/")) {
         console.error("Invalid file type. Only image files are allowed.");
@@ -190,8 +207,8 @@ export async function editMarket(data: {
       formData.append("image", data.image);
     }
 
-    // Request PUT ke endpoint dengan ID (dengan FormData)
-    const response = await fetch(`${host}/api/markets/${data.id}`, {
+    // Send PATCH request with FormData
+    const response = await fetch(`${host}/api/merchants/${data.id}`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -212,12 +229,12 @@ export async function editMarket(data: {
       throw new Error("Invalid API response format.");
     }
   } catch (error: any) {
-    console.error("Failed to edit market:", error.message);
+    console.error("Failed to edit merchant:", error.message);
     return null;
   }
 }
 
-export async function deleteMarket(id: number): Promise<any | null> {
+export async function deleteMerchant(id: number): Promise<any | null> {
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
@@ -227,8 +244,7 @@ export async function deleteMarket(id: number): Promise<any | null> {
       throw new Error("Authorization token is missing.");
     }
 
-    // Request DELETE ke endpoint dengan ID
-    const response = await fetch(`${host}/api/markets/${id}`, {
+    const response = await fetch(`${host}/api/merchants/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -237,7 +253,7 @@ export async function deleteMarket(id: number): Promise<any | null> {
     });
 
     if (!response.ok) {
-      const errorMessage = `Error deleting market: ${response.status} ${response.statusText}`;
+      const errorMessage = `Error deleting merchant: ${response.status} ${response.statusText}`;
       throw new Error(errorMessage);
     }
 
@@ -249,7 +265,7 @@ export async function deleteMarket(id: number): Promise<any | null> {
       throw new Error("Invalid API response format.");
     }
   } catch (error: any) {
-    console.error("Failed to delete market:", error.message);
+    console.error("Failed to delete merchant:", error.message);
     return null;
   }
 }
