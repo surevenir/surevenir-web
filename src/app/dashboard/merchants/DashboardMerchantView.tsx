@@ -194,7 +194,6 @@ export default function DashboardMerchantView({
     setLoading(true);
     console.log("merchant", data);
 
-    // Validasi file image
     if (!data.image) {
       toast.error("Please select a valid image file.");
       setLoading(false);
@@ -336,15 +335,31 @@ export default function DashboardMerchantView({
     }
 
     try {
+      data.userId = userId;
+
+      if (!hasMarket) {
+        setSelectedMarket(undefined);
+        delete data.marketId;
+      }
+
+      if (hasMarket && selectedMarket) {
+        data.marketId = selectedMarket.id.toString();
+        data.longitude = selectedMarket.longitude ?? "";
+        data.latitude = selectedMarket.latitude ?? "";
+        delete data.addresses;
+      }
+
+      console.log("data", data);
+
       const updatedMerchant = {
         id: selectedMerchant.id,
         name: data.name as string,
         description: data.description as string,
-        addresses: data.addresses || "",
-        userId: data.userId || "",
+        addresses: data.addresses || null,
+        userId: data.userId as string,
         longitude: data.longitude as string,
         latitude: data.latitude as string,
-        image: file ? file : null,
+        image: file ? file : undefined,
         marketId: data.marketId ?? null,
       };
 
@@ -431,7 +446,6 @@ export default function DashboardMerchantView({
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
-            <Button onClick={() => console.log(selectedMarket)}>Klik</Button>
             <DialogHeader>
               <DialogTitle>Add New Merchant</DialogTitle>
               <DialogDescription>
@@ -787,6 +801,9 @@ export default function DashboardMerchantView({
                           form.reset({
                             name: merchant.name,
                             description: merchant.description,
+                            addresses: merchant.addresses || "",
+                            marketId: merchant.market_id?.toString() || "",
+                            userId: merchant.user_id,
                             longitude: merchant.longitude,
                             latitude: merchant.latitude,
                           });
@@ -794,6 +811,7 @@ export default function DashboardMerchantView({
                             lat: parseFloat(merchant.latitude),
                             lng: parseFloat(merchant.longitude),
                           });
+                          setHasMarket(!merchant.market_id == null);
                         }}
                       >
                         Edit
@@ -845,6 +863,130 @@ export default function DashboardMerchantView({
                             )}
                           />
 
+                          <div className="flex items-center gap-2 pb-2">
+                            <Checkbox
+                              id="inTheMarket"
+                              checked={hasMarket}
+                              onCheckedChange={() => setHasMarket(!hasMarket)}
+                            />
+                            <label
+                              htmlFor="inTheMarket"
+                              className="peer-disabled:opacity-70 font-medium text-sm leading-none peer-disabled:cursor-not-allowed"
+                            >
+                              In the market
+                            </label>
+                          </div>
+
+                          {hasMarket && (
+                            <FormField
+                              control={form.control}
+                              name="marketId"
+                              render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                  <FormLabel>Market</FormLabel>
+                                  <FormControl>
+                                    <Popover>
+                                      <PopoverTrigger asChild>
+                                        <FormControl>
+                                          <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            className={cn(
+                                              "w-[200px] justify-between",
+                                              !field.value &&
+                                                "text-muted-foreground"
+                                            )}
+                                            onChange={() => {
+                                              setSelectedMarket(
+                                                markets.find(
+                                                  (market) =>
+                                                    market.id.toString() ===
+                                                    field.value
+                                                )
+                                              );
+                                              console.log(
+                                                "selectedMarket",
+                                                selectedMarket
+                                              );
+                                            }}
+                                          >
+                                            {field.value
+                                              ? markets.find(
+                                                  (market) =>
+                                                    market.id.toString() ===
+                                                    field.value
+                                                )?.name
+                                              : "Select market"}
+                                            <ChevronsUpDown className="opacity-50" />
+                                          </Button>
+                                        </FormControl>
+                                      </PopoverTrigger>
+                                      <PopoverContent className="p-0 w-[200px]">
+                                        <Command>
+                                          <CommandInput
+                                            placeholder="Search market..."
+                                            className="h-9"
+                                          />
+                                          <CommandList>
+                                            <CommandEmpty>
+                                              No market found.
+                                            </CommandEmpty>
+                                            <CommandGroup>
+                                              {markets.map((market) => (
+                                                <CommandItem
+                                                  value={market.name}
+                                                  key={market.id}
+                                                  onSelect={() => {
+                                                    form.setValue(
+                                                      "marketId",
+                                                      market.id.toString()
+                                                    );
+                                                    setSelectedMarket(market);
+                                                  }}
+                                                >
+                                                  {market.name}
+                                                  <Check
+                                                    className={cn(
+                                                      "ml-auto",
+                                                      market.id.toString() ===
+                                                        field.value
+                                                        ? "opacity-100"
+                                                        : "opacity-0"
+                                                    )}
+                                                  />
+                                                </CommandItem>
+                                              ))}
+                                            </CommandGroup>
+                                          </CommandList>
+                                        </Command>
+                                      </PopoverContent>
+                                    </Popover>
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          )}
+
+                          {!hasMarket && (
+                            <FormField
+                              control={form.control}
+                              name="addresses"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Addresses</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      placeholder="Enter merchant addresses"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          )}
+
                           {merchant.profile_image_url && (
                             <img
                               src={merchant.profile_image_url}
@@ -883,16 +1025,19 @@ export default function DashboardMerchantView({
                             )}
                           />
 
-                          <div className="border rounded w-full h-[300px]">
-                            <GoogleMap
-                              mapContainerStyle={mapContainerStyle}
-                              zoom={12}
-                              center={mapCoordinates}
-                              onClick={handleMapClick}
-                            >
-                              <Marker position={mapCoordinates} />
-                            </GoogleMap>
-                          </div>
+                          {!hasMarket && (
+                            <div className="border rounded w-full h-[300px]">
+                              <GoogleMap
+                                mapContainerStyle={mapContainerStyle}
+                                zoom={12}
+                                center={mapCoordinates}
+                                onClick={handleMapClick}
+                              >
+                                <Marker position={mapCoordinates} />
+                              </GoogleMap>
+                            </div>
+                          )}
+
                           <DialogFooter>
                             <Button type="submit" disabled={loading}>
                               {loading ? "Updating..." : "Update Market"}

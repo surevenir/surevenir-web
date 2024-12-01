@@ -162,7 +162,7 @@ export async function editMerchant(data: {
   id: number;
   name: string;
   description: string;
-  addresses: string;
+  addresses?: string | null;
   userId: string;
   marketId?: string | null;
   longitude: string;
@@ -184,30 +184,22 @@ export async function editMerchant(data: {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("description", data.description);
-    formData.append("addresses", data.addresses);
     formData.append("user_id", data.userId);
     formData.append("longitude", data.longitude);
     formData.append("latitude", data.latitude);
+
+    if (data.addresses) {
+      formData.append("addresses", data.addresses);
+    }
 
     if (data.marketId) {
       formData.append("market_id", data.marketId);
     }
 
     if (data.image) {
-      if (!data.image.type.startsWith("image/")) {
-        console.error("Invalid file type. Only image files are allowed.");
-        throw new Error("Invalid file type. Only image files are allowed.");
-      }
-
-      if (data.image.size > 3 * 1024 * 1024) {
-        console.error("File size exceeds 3MB.");
-        throw new Error("File size exceeds 3MB.");
-      }
-
       formData.append("image", data.image);
     }
 
-    // Send PATCH request with FormData
     const response = await fetch(`${host}/api/merchants/${data.id}`, {
       method: "PATCH",
       headers: {
