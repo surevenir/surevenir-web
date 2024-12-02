@@ -113,12 +113,9 @@ export default function DashboardProductView({
   >(undefined);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
-  const [searchResults, setSearchResults] = useState(products);
   const [searchQuery, setSearchQuery] = useState("");
   const [nameSortOrder, setNameSortOrder] = useState("asc");
   const [filteredProducts, setFilteredProducts] = useState(products);
-  const [categoryOptions, setCategoryOptions] = useState(categories);
-  const [selectedCategory, setSelectedCategory] = useState("");
 
   const userId = Cookies.get("userId") || "";
   const { isLoaded } = useLoadScript({
@@ -356,18 +353,11 @@ export default function DashboardProductView({
     setSearchQuery(e.target.value);
   };
 
-  const handleSortChange = (e: any) => {
-    const value = e.target.value;
-
-    // Memastikan bahwa value ada dan tidak null/undefined
-    if (value) {
-      setNameSortOrder(value);
-    }
-  };
-
   useEffect(() => {
-    let result = products.filter((product) =>
-      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    let result = products.filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     // Urutkan produk berdasarkan nama
@@ -698,7 +688,7 @@ export default function DashboardProductView({
       {!loading && isLoaded && (
         <Table>
           <TableCaption>
-            {products.length != 0 ? "Products List" : "No Products Found"}
+            Products List ({filteredProducts.length} / {products.length})
           </TableCaption>
           <TableHeader>
             <TableRow>
