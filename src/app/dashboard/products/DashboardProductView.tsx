@@ -714,7 +714,9 @@ export default function DashboardProductView({
                 <TableCell>{product.stock}</TableCell>
                 <TableCell className="flex gap-2">
                   {product.product_categories?.map((category) => (
-                    <Badge>{category.category.name}</Badge>
+                    <Badge key={category.category.id}>
+                      {category.category.name}
+                    </Badge>
                   ))}
                 </TableCell>
                 <TableCell>
