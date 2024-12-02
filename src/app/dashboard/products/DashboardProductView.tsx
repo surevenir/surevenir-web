@@ -80,6 +80,18 @@ import {
   postProductImages,
 } from "@/utils/productActions";
 import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 
 interface DashboardProductViewProps {
   products: Product[] | [];
@@ -103,6 +115,10 @@ export default function DashboardProductView({
   const [files, setFiles] = useState<File[]>([]);
   const [searchResults, setSearchResults] = useState(products);
   const [searchQuery, setSearchQuery] = useState("");
+  const [nameSortOrder, setNameSortOrder] = useState("asc");
+  const [filteredProducts, setFilteredProducts] = useState(products);
+  const [categoryOptions, setCategoryOptions] = useState(categories);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const userId = Cookies.get("userId") || "";
   const { isLoaded } = useLoadScript({
@@ -337,24 +353,39 @@ export default function DashboardProductView({
   };
 
   const handleSearchChange = (e: any) => {
-    const query = e.target.value;
-    setSearchQuery(query);
+    setSearchQuery(e.target.value);
+  };
 
-    // Filter produk berdasarkan query pencarian
-    const filteredResults = products.filter((product) =>
-      product.name.toLowerCase().includes(query.toLowerCase())
-    );
+  const handleSortChange = (e: any) => {
+    const value = e.target.value;
 
-    // Update hasil pencarian
-    setSearchResults(filteredResults);
+    // Memastikan bahwa value ada dan tidak null/undefined
+    if (value) {
+      setNameSortOrder(value);
+    }
   };
 
   useEffect(() => {
-    const filteredResults = products.filter((product) =>
+    let result = products.filter((product) =>
       product.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
-    setSearchResults(filteredResults);
-  }, [searchQuery, products]);
+
+    // Urutkan produk berdasarkan nama
+    if (nameSortOrder === "asc") {
+      result = result.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (nameSortOrder === "desc") {
+      result = result.sort((a, b) => b.name.localeCompare(a.name));
+    } else if (nameSortOrder === "category") {
+      // Kelompokkan produk berdasarkan kategori pertama yang ditemukan
+      result = result.sort((a, b) => {
+        const categoryA = a.product_categories?.[0]?.category?.name || ""; // Pastikan product_categories ada dan kategori pertama ada
+        const categoryB = b.product_categories?.[0]?.category?.name || "";
+        return categoryA.localeCompare(categoryB);
+      });
+    }
+
+    setFilteredProducts(result);
+  }, [searchQuery, nameSortOrder, products]);
 
   return (
     <div className="px-8 pb-8">
@@ -372,6 +403,42 @@ export default function DashboardProductView({
             value={searchQuery}
             onChange={handleSearchChange}
           />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">Filter & Sort</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuLabel>Sort and Filter</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+
+              <DropdownMenuRadioGroup value={nameSortOrder}>
+                <DropdownMenuRadioItem
+                  value="asc"
+                  onSelect={() => {
+                    setNameSortOrder("asc");
+                  }}
+                >
+                  Name Ascending
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem
+                  value="desc"
+                  onSelect={() => {
+                    setNameSortOrder("desc");
+                  }}
+                >
+                  Name Descending
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem
+                  value="category"
+                  onSelect={() => {
+                    setNameSortOrder("category");
+                  }}
+                >
+                  Category
+                </DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Dialog>
             <DialogTrigger asChild>
               <Button
@@ -648,7 +715,7 @@ export default function DashboardProductView({
           {!isLoaded && <Skeleton className="w-full h-4" />}
 
           <TableBody>
-            {searchResults.map((product, index) => (
+            {filteredProducts.map((product, index) => (
               <TableRow key={product.slug}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{product.name}</TableCell>
