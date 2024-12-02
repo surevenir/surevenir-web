@@ -1,25 +1,22 @@
 "use server";
 
-import { getProducts } from "@/utils/actions";
-import ProductView from "./DashboardProductView";
+import { getProducts } from "@/utils/productActions";
+import DashboardProductView from "./DashboardProductView";
+import { getMerchants } from "@/utils/merchantActions";
+import { getCategories } from "@/utils/categoryActions";
 
 export default async function DashboardProductPage() {
-  const products = await getProducts();
-
-  if (!products || products.length === 0) {
-    return (
-      <div className="flex flex-col justify-center items-center min-h-screen">
-        <p className="text-red-500">
-          Failed to load products or no products available. Please try again
-          later.
-        </p>
-      </div>
-    );
-  }
+  const products = (await getProducts()) || [];
+  const merchants = (await getMerchants()) || [];
+  const categories = (await getCategories()) || [];
 
   return (
     <>
-      <ProductView products={products} />
+      <DashboardProductView
+        products={products}
+        merchants={merchants}
+        categories={categories}
+      />
     </>
   );
 }

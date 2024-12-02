@@ -32,8 +32,8 @@ export type Market = {
   profile_image_url: string | null;
   longitude: string;
   latitude: string;
-  createdAt: string | null;
-  updatedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
   images: Image[] | null;
 };
 
@@ -48,8 +48,8 @@ export type Merchant = {
   latitude: string;
   user_id: string;
   market_id: number;
-  createdAt: string | null;
-  updatedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
   images: Image[] | null;
 };
 
@@ -59,4 +59,39 @@ export type Category = {
   description: string;
   image_url: string;
   range_price: string;
+};
+
+type MarketInMerchant = {
+  id: number;
+  name: string;
+};
+
+type MerchantInProduct = {
+  id: number;
+  name: string;
+  market: MarketInMerchant;
+};
+
+type CategoryInProductCategory = {
+  id: number;
+  name: string;
+};
+
+type ProductCategoryInProduct = {
+  category: CategoryInProductCategory;
+};
+
+export type Product = {
+  id: number;
+  slug: string | null;
+  name: string;
+  description: string;
+  price: number;
+  merchant_id: number;
+  stock: number;
+  createdAt: string;
+  updatedAt: string;
+  merchant: MerchantInProduct;
+  product_categories: ProductCategoryInProduct[] | null;
+  images: Image[] | null;
 };

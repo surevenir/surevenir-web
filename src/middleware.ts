@@ -17,6 +17,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
+  if (
+    !idToken &&
+    (pathname === "/markets" ||
+      pathname === "/merchants" ||
+      pathname === "/products" ||
+      pathname === "/predict")
+  ) {
+    return NextResponse.redirect(new URL("/auth/login", request.url));
+  }
+
   // Izinkan akses ke public routes tanpa validasi
   if (PUBLIC_ROUTES.includes(pathname)) {
     return NextResponse.next();
@@ -57,5 +67,11 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/auth/:path*"], // Middleware berlaku untuk dashboard dan auth routes
+  matcher: [
+    "/dashboard/:path*",
+    "/auth/:path*",
+    "/markets",
+    "/merchants",
+    "/products",
+  ], // Middleware berlaku untuk dashboard dan auth routes
 };

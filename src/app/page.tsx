@@ -151,7 +151,7 @@ export default function HomePage() {
           agent-id="e5dc7f79-4500-4abf-a75c-ef9fcb1cecb9"
           language-code="en"
           max-query-length="-1">
-          <df-messenger-chat-bubble chat-title="SureVenir-Agent"></df-messenger-chat-bubble>
+          <df-messenger-chat-bubble chat-title="SureVenir Chatbot"></df-messenger-chat-bubble>
           </df-messenger>
           `,
           }}

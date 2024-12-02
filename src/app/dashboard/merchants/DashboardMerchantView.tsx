@@ -116,19 +116,6 @@ export default function DashboardMerchantView({
 
   type FormData = z.infer<typeof formSchema>;
 
-  const dynamicSchema = formSchema.refine(
-    (data) => {
-      if (hasMarket) {
-        data.addresses = undefined;
-        return true;
-      }
-      return true;
-    },
-    {
-      message: "Validation failed",
-    }
-  );
-
   const formSchemaImages = z.object({
     id: z.number(),
     images: z.array(z.instanceof(File)),
@@ -168,15 +155,6 @@ export default function DashboardMerchantView({
       setMerchants(data || []);
     } catch (error: any) {
       console.error("Error fetching merchants:", error.message);
-    }
-  };
-
-  const fetchMarkets = async () => {
-    try {
-      const data = await getMarkets();
-      setMarkets(data || []);
-    } catch (error: any) {
-      console.error("Error fetching markets:", error.message);
     }
   };
 
