@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={` antialiased ${roboto.className} overflow-x-hidden`}
+        className={` antialiased ${roboto.className} `}
         suppressHydrationWarning
       >
         <ThemeProvider

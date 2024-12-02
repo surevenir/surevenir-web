@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 import { Button } from "@/components/ui/button";
 import {
@@ -57,7 +57,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
+import {
+  Check,
+  ChevronsUpDown,
+  RefreshCcwIcon,
+  RefreshCwIcon,
+} from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -74,6 +79,7 @@ import {
   postProduct,
   postProductImages,
 } from "@/utils/productActions";
+import { Badge } from "@/components/ui/badge";
 
 interface DashboardProductViewProps {
   products: Product[] | [];
@@ -95,6 +101,8 @@ export default function DashboardProductView({
   >(undefined);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+  const [searchResults, setSearchResults] = useState(products);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const userId = Cookies.get("userId") || "";
   const { isLoaded } = useLoadScript({
@@ -164,11 +172,14 @@ export default function DashboardProductView({
   });
 
   const fetchProducts = async () => {
+    setLoading(true);
     try {
       const data = await getProducts();
       setProducts(data || []);
     } catch (error: any) {
       console.error("Error fetching products:", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -325,257 +336,294 @@ export default function DashboardProductView({
     }
   };
 
+  const handleSearchChange = (e: any) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    // Filter produk berdasarkan query pencarian
+    const filteredResults = products.filter((product) =>
+      product.name.toLowerCase().includes(query.toLowerCase())
+    );
+
+    // Update hasil pencarian
+    setSearchResults(filteredResults);
+  };
+
+  useEffect(() => {
+    const filteredResults = products.filter((product) =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setSearchResults(filteredResults);
+  }, [searchQuery, products]);
+
   return (
     <div className="px-8 pb-8">
-      <div className="flex justify-between mb-4">
-        <h3 className="font-semibold text-xl">Product List</h3>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              onClick={() => {
-                formAdd.reset();
-                setSelectedProduct(null);
-              }}
-            >
-              Add Product
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Add New Product</DialogTitle>
-              <DialogDescription>
-                Fill in the details below to create a new product.
-              </DialogDescription>
-            </DialogHeader>
-            <Form {...formAdd}>
-              <form
-                className="space-y-4"
-                onSubmit={formAdd.handleSubmit(handleAddProduct)}
+      <div className="flex flex-wrap justify-between items-center mb-4">
+        <div className="flex items-center gap-4">
+          <h3 className="font-semibold text-xl">Product List</h3>
+          <Button variant={"outline"} onClick={() => fetchProducts()}>
+            <RefreshCwIcon />
+          </Button>
+        </div>
+        <div className="flex items-center gap-4">
+          <Input
+            type="text"
+            placeholder="Search for..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                onClick={() => {
+                  formAdd.reset();
+                  setSelectedProduct(null);
+                }}
               >
-                <FormField
-                  control={formAdd.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter product name"
-                          type="text"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                Add Product
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Add New Product</DialogTitle>
+                <DialogDescription>
+                  Fill in the details below to create a new product.
+                </DialogDescription>
+              </DialogHeader>
+              <Form {...formAdd}>
+                <form
+                  className="space-y-4"
+                  onSubmit={formAdd.handleSubmit(handleAddProduct)}
+                >
+                  <FormField
+                    control={formAdd.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter product name"
+                            type="text"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={formAdd.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter product description"
-                          type="text"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <FormField
+                    control={formAdd.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter product description"
+                            type="text"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={formAdd.control}
-                  name="price"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Price</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter product price"
-                          type="number"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(parseFloat(e.target.value))
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <FormField
+                    control={formAdd.control}
+                    name="price"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Price</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter product price"
+                            type="number"
+                            {...field}
+                            onChange={(e) =>
+                              field.onChange(parseFloat(e.target.value))
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={formAdd.control}
-                  name="stock"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Stock</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter product stock"
-                          type="number"
-                          {...field}
-                          onChange={(e) =>
-                            field.onChange(parseInt(e.target.value))
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <FormField
+                    control={formAdd.control}
+                    name="stock"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Stock</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter product stock"
+                            type="number"
+                            {...field}
+                            onChange={(e) =>
+                              field.onChange(parseInt(e.target.value))
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={formAdd.control}
-                  name="merchantId"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Merchant</FormLabel>
-                      <FormControl>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                role="combobox"
-                                className={cn(
-                                  "w-[200px] justify-between",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                                onChange={() => {
-                                  setSelectedMerchant(
-                                    merchants.find(
-                                      (merchant) => merchant.id === field.value
-                                    )
-                                  );
-                                }}
-                              >
-                                {field.value
-                                  ? merchants.find(
-                                      (merchant) => merchant.id === field.value
-                                    )?.name
-                                  : "Select merchant"}
-                                <ChevronsUpDown className="opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="p-0 w-[200px]">
-                            <Command>
-                              <CommandInput
-                                placeholder="Search merchant..."
-                                className="h-9"
-                              />
-                              <CommandList>
-                                <CommandEmpty>No merchant found.</CommandEmpty>
-                                <CommandGroup>
-                                  {merchants.map((merchant) => (
-                                    <CommandItem
-                                      value={merchant.name}
-                                      key={merchant.id}
-                                      onSelect={() => {
-                                        formAdd.setValue(
-                                          "merchantId",
-                                          merchant.id
-                                        );
-                                        setSelectedMerchant(merchant);
-                                      }}
-                                    >
-                                      {merchant.name}
-                                      <Check
-                                        className={cn(
-                                          "ml-auto",
+                  <FormField
+                    control={formAdd.control}
+                    name="merchantId"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel>Merchant</FormLabel>
+                        <FormControl>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant="outline"
+                                  role="combobox"
+                                  className={cn(
+                                    "w-[200px] justify-between",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                  onChange={() => {
+                                    setSelectedMerchant(
+                                      merchants.find(
+                                        (merchant) =>
                                           merchant.id === field.value
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                                      )
+                                    );
+                                  }}
+                                >
+                                  {field.value
+                                    ? merchants.find(
+                                        (merchant) =>
+                                          merchant.id === field.value
+                                      )?.name
+                                    : "Select merchant"}
+                                  <ChevronsUpDown className="opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="p-0 w-[200px]">
+                              <Command>
+                                <CommandInput
+                                  placeholder="Search merchant..."
+                                  className="h-9"
+                                />
+                                <CommandList>
+                                  <CommandEmpty>
+                                    No merchant found.
+                                  </CommandEmpty>
+                                  <CommandGroup>
+                                    {merchants.map((merchant) => (
+                                      <CommandItem
+                                        value={merchant.name}
+                                        key={merchant.id}
+                                        onSelect={() => {
+                                          formAdd.setValue(
+                                            "merchantId",
+                                            merchant.id
+                                          );
+                                          setSelectedMerchant(merchant);
+                                        }}
+                                      >
+                                        {merchant.name}
+                                        <Check
+                                          className={cn(
+                                            "ml-auto",
+                                            merchant.id === field.value
+                                              ? "opacity-100"
+                                              : "opacity-0"
+                                          )}
+                                        />
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
+                            </PopoverContent>
+                          </Popover>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={formAdd.control}
-                  name="categoryIds"
-                  render={() => (
-                    <FormItem>
-                      <div className="mb-4">
-                        <FormLabel className="text-base">Category</FormLabel>
-                      </div>
-                      {categories.map((item) => (
-                        <FormField
-                          key={item.id}
-                          control={formAdd.control}
-                          name="categoryIds"
-                          render={({ field }) => {
-                            const currentValue = Array.isArray(field.value)
-                              ? field.value
-                              : field.value?.split(",") || [];
+                  <FormField
+                    control={formAdd.control}
+                    name="categoryIds"
+                    render={() => (
+                      <FormItem>
+                        <div className="mb-4">
+                          <FormLabel className="text-base">Category</FormLabel>
+                        </div>
+                        {categories.map((item) => (
+                          <FormField
+                            key={item.id}
+                            control={formAdd.control}
+                            name="categoryIds"
+                            render={({ field }) => {
+                              const currentValue = Array.isArray(field.value)
+                                ? field.value
+                                : field.value?.split(",") || [];
 
-                            return (
-                              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                                <FormControl>
-                                  <Checkbox
-                                    checked={currentValue.includes(
-                                      item.id.toString()
-                                    )}
-                                    onCheckedChange={(checked) => {
-                                      let newValue: string[];
-                                      if (checked) {
-                                        // Tambahkan ID kategori yang dipilih
-                                        newValue = [
-                                          ...currentValue,
-                                          item.id.toString(),
-                                        ];
-                                      } else {
-                                        // Hapus ID kategori yang dibatalkan
-                                        newValue = currentValue.filter(
-                                          (value) =>
-                                            value !== item.id.toString()
-                                        );
-                                      }
+                              return (
+                                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={currentValue.includes(
+                                        item.id.toString()
+                                      )}
+                                      onCheckedChange={(checked) => {
+                                        let newValue: string[];
+                                        if (checked) {
+                                          // Tambahkan ID kategori yang dipilih
+                                          newValue = [
+                                            ...currentValue,
+                                            item.id.toString(),
+                                          ];
+                                        } else {
+                                          // Hapus ID kategori yang dibatalkan
+                                          newValue = currentValue.filter(
+                                            (value) =>
+                                              value !== item.id.toString()
+                                          );
+                                        }
 
-                                      // Update field value dengan string yang dipisahkan koma
-                                      // Jika ada lebih dari satu kategori, pisahkan dengan koma
-                                      field.onChange(newValue.join(","));
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormLabel className="font-normal text-sm">
-                                  {item.name}
-                                </FormLabel>
-                              </FormItem>
-                            );
-                          }}
-                        />
-                      ))}
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                                        // Update field value dengan string yang dipisahkan koma
+                                        // Jika ada lebih dari satu kategori, pisahkan dengan koma
+                                        field.onChange(newValue.join(","));
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="font-normal text-sm">
+                                    {item.name}
+                                  </FormLabel>
+                                </FormItem>
+                              );
+                            }}
+                          />
+                        ))}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <DialogFooter>
-                  <Button disabled={loading} type="submit">
-                    {loading ? "Adding..." : "Add Product"}
-                  </Button>
-                </DialogFooter>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
+                  <DialogFooter>
+                    <Button disabled={loading} type="submit">
+                      {loading ? "Adding..." : "Add Product"}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {loading && <TableSkeleton />}
@@ -592,6 +640,7 @@ export default function DashboardProductView({
               <TableHead>Description</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>Stock</TableHead>
+              <TableHead>Categories</TableHead>
               <TableHead>Images</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -599,13 +648,18 @@ export default function DashboardProductView({
           {!isLoaded && <Skeleton className="w-full h-4" />}
 
           <TableBody>
-            {products.map((product, index) => (
+            {searchResults.map((product, index) => (
               <TableRow key={product.slug}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{product.name}</TableCell>
                 <TableCell>{product.description}</TableCell>
                 <TableCell>{product.price}</TableCell>
                 <TableCell>{product.stock}</TableCell>
+                <TableCell className="flex gap-2">
+                  {product.product_categories?.map((category) => (
+                    <Badge>{category.category.name}</Badge>
+                  ))}
+                </TableCell>
                 <TableCell>
                   <Dialog>
                     <DialogTrigger asChild>
