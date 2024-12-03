@@ -109,3 +109,55 @@ export async function postUser(data: {
     return null;
   }
 }
+
+export async function updateUser(
+  data: {
+    id: string;
+    full_name?: string;
+    username?: string;
+    email?: string;
+    password?: string;
+    role?: string;
+    address?: string;
+  },
+  token: string,
+  image?: File | undefined
+): Promise<any | null> {
+  try {
+    const host: string =
+      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
+
+    const formData = new FormData();
+    if (data.full_name) formData.append("full_name", data.full_name);
+    if (data.username) formData.append("username", data.username);
+    if (data.email) formData.append("email", data.email);
+    if (data.password) formData.append("password", data.password);
+    if (data.role) formData.append("role", data.role);
+    if (data.address) formData.append("address", data.address);
+    if (image) formData.append("image", image);
+
+    const response = await fetch(`${host}/api/users/${data.id}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorMessage = `Error update user: ${response.status} ${response.statusText}`;
+      throw new Error(errorMessage);
+    }
+
+    const result = await response.json();
+
+    if (result.success && result.data) {
+      return result.data;
+    } else {
+      throw new Error("Invalid API response format.");
+    }
+  } catch (error: any) {
+    console.error("Failed to update user:", error.message);
+    return null;
+  }
+}

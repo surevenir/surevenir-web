@@ -2,7 +2,7 @@
 
 import { User } from "@/app/types/types";
 import { Button } from "@/components/ui/button";
-import { getUsers } from "@/utils/userActions";
+import { getUsers, updateUser } from "@/utils/userActions";
 import { RefreshCwIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
@@ -27,6 +27,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
 
 interface DashboardUserViewProps {
   users: User[] | [];
@@ -36,6 +54,8 @@ export default function DashboardUserView({
   users: initialUsers,
 }: DashboardUserViewProps) {
   const [users, setUsers] = useState<User[]>(initialUsers);
+  const [selectedUser, setSelectedUser] = useState<User | null>();
+  const [selectedRole, setSelectedRole] = useState<string | null>("");
   const [filteredUsers, setFilteredUsers] = useState(users);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -57,6 +77,36 @@ export default function DashboardUserView({
 
   const handleSearchChange = (e: any) => {
     setSearchQuery(e.target.value);
+  };
+
+  const handleEditUser = async () => {
+    if (!selectedUser || !selectedRole) return;
+
+    // Call the updateUser function with user ID and selected role
+    setLoading(true);
+    console.log("selectedUser", selectedUser);
+    console.log("selectedRole", selectedRole);
+
+    try {
+      const result = await updateUser(
+        { id: selectedUser?.id as string, role: selectedRole as string },
+        token as string,
+        undefined
+      );
+      if (result) {
+        toast.success("Successfully updated user");
+        setSelectedUser(null);
+        setSelectedRole(null);
+        await fetchUsers();
+      } else {
+        toast.error("Failed to update");
+      }
+    } catch (error: any) {
+      console.error("Error updating product:", error.message);
+      toast("An error occurred while updating the user");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -168,7 +218,7 @@ export default function DashboardUserView({
             </TableHeader>
             <TableBody>
               {filteredUsers.map((user, index) => (
-                <TableRow>
+                <TableRow key={user.id}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{user.full_name}</TableCell>
                   <TableCell>{user.username}</TableCell>
@@ -177,13 +227,55 @@ export default function DashboardUserView({
                   <TableCell>
                     {user.role == "ADMIN" ? (
                       <Badge className="bg-green-500 text-white">Admin</Badge>
+                    ) : user.role == "USER" ? (
+                      <Badge variant={"outline"}>User</Badge>
                     ) : (
-                      <Badge className="bg-red-500 text-white">User</Badge>
+                      <Badge>Merchant</Badge>
                     )}
                   </TableCell>
                   <TableCell className="flex gap-2">
-                    <Button>Edit</Button>
-                    <Button variant={"destructive"}>Delete</Button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button
+                          onClick={() => {
+                            setSelectedUser(user);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Edit User</DialogTitle>
+                          <DialogDescription>
+                            Update the role of user {user.full_name}.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <Select
+                          value={selectedRole || user.role}
+                          onValueChange={setSelectedRole}
+                        >
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue
+                              placeholder={
+                                user.role.charAt(0).toUpperCase() +
+                                user.role.slice(1).toLowerCase()
+                              }
+                              defaultValue={user.role}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Role</SelectLabel>
+                              <SelectItem value="USER">User</SelectItem>
+                              <SelectItem value="MERCHANT">Merchant</SelectItem>
+                              <SelectItem value="ADMIN">Admin</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        <Button onClick={handleEditUser}>Submit</Button>
+                      </DialogContent>
+                    </Dialog>
                   </TableCell>
                 </TableRow>
               ))}
