@@ -99,7 +99,7 @@ const data = {
     },
     {
       title: "Users",
-      url: "/dashboard/products",
+      url: "/dashboard/users",
       icon: UsersIcon,
       items: [
         {

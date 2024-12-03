@@ -23,9 +23,16 @@ import { toast } from "sonner";
 import { postUser } from "@/utils/userActions";
 import ShinyButton from "./ui/shiny-button";
 import { ArrowLeftIcon } from "lucide-react";
-import crypto from "crypto";
 import dotenv from "dotenv";
 
+/**
+ * RegisterForm component
+ *
+ * Handles user registration, including creating a new Firebase user and
+ * saving the user's full name, username, email, and password to the database.
+ *
+ * @returns A form component for user registration
+ */
 export function RegisterForm() {
   dotenv.config();
   const router = useRouter();
@@ -36,26 +43,13 @@ export function RegisterForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const encryptPassword = (password: string): string => {
-    // Mengambil key dari env
-    const key = process.env.NEXT_PUBLIC_PASSWORD_KEY;
-
-    if (!key) {
-      throw new Error("PASSWORD_KEY is not defined");
-    }
-
-    // Hash key menjadi panjang 32 byte dengan SHA-256
-    const hashedKey = crypto.createHash("sha256").update(key).digest();
-
-    const algorithm = "aes-256-ctr";
-    const iv = crypto.randomBytes(16); // Inisialisasi vector acak
-    const cipher = crypto.createCipheriv(algorithm, hashedKey, iv);
-    let encrypted = cipher.update(password, "utf8", "hex");
-    encrypted += cipher.final("hex");
-
-    return `${iv.toString("hex")}:${encrypted}`;
-  };
-
+  /**
+   * Handles user registration, including creating a new Firebase user and
+   * saving the user's full name, username, email, and password to the database.
+   *
+   * @param {React.FormEvent} e The form event
+   * @returns {Promise<void>}
+   */
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -63,17 +57,13 @@ export function RegisterForm() {
 
     let userCredential = null;
     try {
-      // Mendaftar ke Firebase menggunakan password plain text
       userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
-      // Update display name di Firebase
-      await updateProfile(userCredential.user, { displayName: username });
 
-      // Enkripsi password sebelum menyimpan ke database
-      const encryptedPassword = encryptPassword(password);
+      await updateProfile(userCredential.user, { displayName: username });
 
       const idUser = userCredential.user.uid;
 
@@ -82,7 +72,7 @@ export function RegisterForm() {
         full_name: fullname,
         username,
         email,
-        password: encryptedPassword,
+        password,
       };
 
       const result = await postUser(userData);
@@ -100,16 +90,14 @@ export function RegisterForm() {
       setError(err.message || "Something went wrong. Please try again.");
       toast.error(err.message || "Registration failed.");
 
-      // Jika ada error dan userCredential sudah ada, hapus user yang baru terdaftar di Firebase
       if (userCredential) {
         try {
-          await deleteUser(userCredential.user); // Menghapus user dari Firebase
+          await deleteUser(userCredential.user);
         } catch (deleteError: any) {
           console.error("Failed to delete Firebase user:", deleteError.message);
         }
       }
 
-      // Batalkan kedua proses jika salah satu gagal
       setLoading(false);
       return;
     } finally {
