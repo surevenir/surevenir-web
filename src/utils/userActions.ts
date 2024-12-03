@@ -38,7 +38,7 @@ export async function getUsers(token: string): Promise<any[] | null> {
 export async function getUserById(
   id: string,
   token: string
-): Promise<any[] | null> {
+): Promise<any | null> {
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
@@ -115,10 +115,10 @@ export async function updateUser(
     id: string;
     full_name?: string;
     username?: string;
-    email?: string;
-    password?: string;
     role?: string;
     address?: string;
+    longitude?: string;
+    latitude?: string;
   },
   token: string,
   image?: File | undefined
@@ -130,10 +130,10 @@ export async function updateUser(
     const formData = new FormData();
     if (data.full_name) formData.append("full_name", data.full_name);
     if (data.username) formData.append("username", data.username);
-    if (data.email) formData.append("email", data.email);
-    if (data.password) formData.append("password", data.password);
     if (data.role) formData.append("role", data.role);
     if (data.address) formData.append("address", data.address);
+    if (data.longitude) formData.append("longitude", data.longitude.toString());
+    if (data.latitude) formData.append("latitude", data.latitude.toString());
     if (image) formData.append("image", image);
 
     const response = await fetch(`${host}/api/users/${data.id}`, {

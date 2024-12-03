@@ -67,7 +67,7 @@ export function TypographyH4({
   return (
     <h4
       className={clsx(
-        "scroll-m-20 font-semibold text-primary text-xl dark:text-white tracking-tight",
+        "scroll-m-20 text-primary text-xl dark:text-white tracking-tight",
         className
       )}
     >

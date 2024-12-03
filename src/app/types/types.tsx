@@ -7,8 +7,8 @@ export type User = {
   phone: string | null;
   role: string;
   provider: string;
-  longitude: number | null;
-  latitude: number | null;
+  longitude: string | null;
+  latitude: string | null;
   address: string | null;
   profile_image_url: string | null;
   createdAt: string;

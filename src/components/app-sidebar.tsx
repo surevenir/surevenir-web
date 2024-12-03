@@ -110,12 +110,12 @@ const data = {
     },
     {
       title: "Settings",
-      url: "/dashboard/settings",
+      url: "/dashboard/profile",
       icon: Settings2,
       items: [
         {
           title: "Profile",
-          url: "/dashboard/settings/profile",
+          url: "/dashboard/profile",
         },
       ],
     },
