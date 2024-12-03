@@ -28,8 +28,6 @@ type NavUserProps = {
 export function NavUser({ user }: NavUserProps) {
   const { isMobile } = useSidebar();
 
-  console.log(JSON.stringify(user, null, 2));
-
   return (
     <SidebarMenu>
       <SidebarMenuItem>

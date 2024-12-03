@@ -19,6 +19,7 @@ import { auth } from "@/lib/firebaseConfig";
 import Cookies from "js-cookie";
 import ShinyButton from "./ui/shiny-button";
 import { ArrowLeftIcon } from "lucide-react";
+import { getUserById } from "@/utils/userActions";
 
 export function LoginForm() {
   const router = useRouter();
@@ -27,6 +28,15 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  /**
+   * Handles user login, including signing in to Firebase and saving the user's
+   * ID token and user ID to cookies. If the user is an admin or merchant, they
+   * will be redirected to the dashboard. Otherwise, they will be redirected to
+   * their profile page.
+   *
+   * @param {React.FormEvent} e The form event
+   * @returns {Promise<void>}
+   */
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -42,7 +52,6 @@ export function LoginForm() {
       const idToken = await userCredential.user.getIdToken();
       const userId = userCredential.user.uid;
 
-      // Simpan token dan userId di cookies menggunakan js-cookie
       Cookies.set("idToken", idToken, {
         expires: 7,
         path: "/",
@@ -56,9 +65,15 @@ export function LoginForm() {
         sameSite: "Strict",
       });
 
-      // Redirect ke dashboard atau halaman lain
-      toast("Welcome to Dashboard");
-      router.push("/dashboard");
+      const user = await getUserById(userId as string, userId as string);
+
+      if (user.role == "ADMIN" || user.role == "MERCHANT") {
+        toast("Welcome to Dashboard");
+        router.push("/dashboard");
+      } else {
+        toast("Welcome Home");
+        router.push("/profile");
+      }
     } catch (err: any) {
       console.error("Login failed:", err);
       setError(err.message);

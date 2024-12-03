@@ -22,6 +22,7 @@ import { getUserById, updateUser } from "@/utils/userActions";
 import Cookies from "js-cookie";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
 import TableSkeleton from "@/components/table-skeleton";
+import DashboardProfileSkeleton from "./DashboardProfileSkeleton";
 
 const formSchema = z.object({
   full_name: z.string().optional(),
@@ -65,7 +66,7 @@ export default function DashboardProfileView({
       full_name: user?.full_name || "",
       username: user?.username || "",
       address: user?.address || "",
-      longitude: (user?.longitude as string) || "",
+      longitude: user?.longitude || "",
       latitude: user?.latitude || "",
       phone: user?.phone || "",
       image: undefined,
@@ -77,8 +78,8 @@ export default function DashboardProfileView({
   });
 
   const handleEditUser = async (data: FormProfile) => {
-    // Call the updateUser function with user ID and selected role
     setLoading(true);
+    console.log("data", JSON.stringify(data, null, 2));
 
     try {
       const result = await updateUser(
@@ -86,6 +87,9 @@ export default function DashboardProfileView({
         token as string,
         file
       );
+
+      console.log("result", JSON.stringify(result, null, 2));
+
       if (result) {
         toast.success("Successfully updated user");
         await fetchUser();
@@ -145,7 +149,7 @@ export default function DashboardProfileView({
         </TypographyMuted>
         <hr />
 
-        {loading && <TableSkeleton />}
+        {loading && <DashboardProfileSkeleton />}
 
         {!loading && isLoaded && (
           <div className="">
@@ -207,7 +211,7 @@ export default function DashboardProfileView({
                           <Input
                             placeholder="Phone"
                             {...field}
-                            type="number"
+                            type="text"
                             required
                           />
                         </FormControl>

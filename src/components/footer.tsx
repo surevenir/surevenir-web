@@ -54,7 +54,7 @@ export default function Footer() {
           <div>
             <h2 className="mb-4 font-bold text-xl">Surevenir</h2>
             <p className="text-gray-400 text-sm">
-              Scan and Buy Souvenir Easily
+              Scan and Find Souvenir Easily
             </p>
             <div className="flex items-center gap-4 mt-4 pb-4">
               <Link href="https://github.com/surevenir">

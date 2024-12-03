@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getUserById } from "./utils/userActions";
 
 const PUBLIC_ROUTES = ["/", "/auth/login", "/auth/register"];
 
@@ -8,6 +9,9 @@ export async function middleware(request: NextRequest) {
 
   // Ambil token dari cookies
   const idToken = request.cookies.get("idToken")?.value;
+  const userId = request.cookies.get("userId")?.value;
+
+  const user = await getUserById(userId as string, userId as string);
 
   // Jika pengguna sudah login, blok akses ke "/auth/login" dan "/auth/register"
   if (
@@ -25,6 +29,12 @@ export async function middleware(request: NextRequest) {
       pathname === "/predict")
   ) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
+  }
+
+  if (user) {
+    if (user.role !== "ADMIN" && pathname.includes("/dashboard")) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
   }
 
   // Izinkan akses ke public routes tanpa validasi

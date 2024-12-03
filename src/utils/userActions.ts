@@ -30,7 +30,6 @@ export async function getUsers(token: string): Promise<any[] | null> {
       throw new Error("Invalid API response format.");
     }
   } catch (error: any) {
-    console.error("Failed to fetch users:", error.message);
     return null;
   }
 }
@@ -68,7 +67,6 @@ export async function getUserById(
       throw new Error("Invalid API response format.");
     }
   } catch (error: any) {
-    console.error("Failed to fetch users:", error.message);
     return null;
   }
 }
@@ -105,7 +103,6 @@ export async function postUser(data: {
       throw new Error("Invalid API response format.");
     }
   } catch (error: any) {
-    console.error("Failed to post user:", error.message);
     return null;
   }
 }
@@ -116,6 +113,7 @@ export async function updateUser(
     full_name?: string;
     username?: string;
     role?: string;
+    phone?: string;
     address?: string;
     longitude?: string;
     latitude?: string;
@@ -132,6 +130,7 @@ export async function updateUser(
     if (data.username) formData.append("username", data.username);
     if (data.role) formData.append("role", data.role);
     if (data.address) formData.append("address", data.address);
+    if (data.phone) formData.append("phone", data.phone);
     if (data.longitude) formData.append("longitude", data.longitude.toString());
     if (data.latitude) formData.append("latitude", data.latitude.toString());
     if (image) formData.append("image", image);
@@ -157,7 +156,6 @@ export async function updateUser(
       throw new Error("Invalid API response format.");
     }
   } catch (error: any) {
-    console.error("Failed to update user:", error.message);
     return null;
   }
 }
