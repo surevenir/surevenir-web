@@ -37,7 +37,6 @@ import {
   deleteMarket,
   postMarket,
   editMarket,
-  postMarketImages,
   getMarkets,
 } from "@/utils/marketActions";
 import { toast } from "sonner";
@@ -54,8 +53,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Market } from "@/app/types/types";
-import { deleteImage } from "@/utils/imageActions";
+import { Market, MediaType } from "@/app/types/types";
+import { deleteImage, postImages } from "@/utils/imageActions";
 import Cookies from "js-cookie";
 import { RefreshCwIcon } from "lucide-react";
 
@@ -130,7 +129,7 @@ export default function DashboardMarketView({
   const fetchMarkets = async () => {
     setLoading(true);
     try {
-      const data = await getMarkets();
+      const data = await getMarkets(token as string);
       setMarkets(data || []);
     } catch (error: any) {
       console.error("Error fetching markets:", error.message);
@@ -167,7 +166,7 @@ export default function DashboardMarketView({
     setLoading(true);
 
     try {
-      const result = await postMarket(data);
+      const result = await postMarket(data, token as string);
       if (result) {
         toast.success("Market added successfully!");
         form.reset();
@@ -240,10 +239,14 @@ export default function DashboardMarketView({
 
     setLoading(true);
     try {
-      const result = await postMarketImages({
-        id: selectedMarket.id,
-        images: files,
-      });
+      const result = await postImages(
+        {
+          id: selectedMarket.id,
+          images: files,
+        },
+        MediaType.MARKET,
+        token as string
+      );
 
       if (result) {
         toast.success("Market images added successfully!");
@@ -308,7 +311,7 @@ export default function DashboardMarketView({
         image: data.image ? data.image : undefined,
       };
 
-      const result = await editMarket(updatedMarket);
+      const result = await editMarket(updatedMarket, token as string);
 
       if (result) {
         toast.success("Market updated successfully!");
@@ -337,7 +340,7 @@ export default function DashboardMarketView({
 
     setLoading(true);
     try {
-      const result = await deleteMarket(selectedMarket.id);
+      const result = await deleteMarket(selectedMarket.id, token as string);
       if (result) {
         toast("Successfully deleted market");
         setSelectedMarket(null);

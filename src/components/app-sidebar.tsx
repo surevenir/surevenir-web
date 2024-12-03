@@ -24,6 +24,8 @@ import {
 } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
 import Cookies from "js-cookie";
+import { getUserById } from "@/utils/userActions";
+import { User } from "@/app/types/types";
 
 const data = {
   profile: {
@@ -32,7 +34,7 @@ const data = {
   user: {
     name: "johndoe",
     email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    avatar: "/logo.png",
   },
   navMain: [
     {
@@ -138,8 +140,18 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const token = Cookies.get("idToken");
-  const userId = Cookies.get("userId");
+  const [user, setUser] = React.useState<User>();
+  // const token = Cookies.get("idToken");
+  const userId = Cookies.get("userId") || "";
+  const fetchUser = async () => {
+    const user: any = (await getUserById(userId, userId as string)) || [];
+    setUser(user);
+  };
+
+  React.useEffect(() => {
+    fetchUser();
+  }, []);
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -149,7 +161,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

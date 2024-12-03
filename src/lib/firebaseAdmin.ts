@@ -2,7 +2,7 @@ import admin from "firebase-admin";
 
 // Konfigurasi service account
 
-import serviceAccount from "./../credentials/credentials";
+var serviceAccount = require("./../credentials/credentials.json");
 
 // Inisialisasi Firebase Admin SDK
 if (!admin.apps.length) {

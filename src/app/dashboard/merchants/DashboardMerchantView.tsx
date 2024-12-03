@@ -47,15 +47,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Market, Merchant } from "@/app/types/types";
-import { deleteImage } from "@/utils/imageActions";
+import { Market, MediaType, Merchant } from "@/app/types/types";
+import { deleteImage, postImages } from "@/utils/imageActions";
 import Cookies from "js-cookie";
 import {
   deleteMerchant,
   editMerchant,
   getMerchants,
   postMerchant,
-  postMerchantImages,
 } from "@/utils/merchantActions";
 import {
   Popover,
@@ -170,7 +169,7 @@ export default function DashboardMerchantView({
   const fetchMerchants = async () => {
     setLoading(true);
     try {
-      const data = await getMerchants();
+      const data = await getMerchants(userId as string);
       setMerchants(data || []);
     } catch (error: any) {
       console.error("Error fetching merchants:", error.message);
@@ -243,7 +242,7 @@ export default function DashboardMerchantView({
         delete data.addresses;
       }
 
-      const result = await postMerchant({ ...data, image: file });
+      const result = await postMerchant({ ...data, image: file }, userId);
 
       if (result) {
         toast.success("Merchant added successfully!");
@@ -318,10 +317,14 @@ export default function DashboardMerchantView({
 
     setLoading(true);
     try {
-      const result = await postMerchantImages({
-        id: selectedMerchant.id,
-        images: files,
-      });
+      const result = await postImages(
+        {
+          id: selectedMerchant.id,
+          images: files,
+        },
+        MediaType.MERCHANT,
+        userId
+      );
 
       if (result) {
         toast.success("Merchant images added successfully!");
@@ -405,7 +408,7 @@ export default function DashboardMerchantView({
         marketId: data.marketId ?? null,
       };
 
-      const result = await editMerchant(updatedMerchant);
+      const result = await editMerchant(updatedMerchant, userId as string);
 
       if (result) {
         toast.success("Merchant updated successfully!");
@@ -434,7 +437,10 @@ export default function DashboardMerchantView({
 
     setLoading(true);
     try {
-      const result = await deleteMerchant(selectedMerchant.id);
+      const result = await deleteMerchant(
+        selectedMerchant.id,
+        userId as string
+      );
       if (result) {
         toast("Successfully deleted merchant");
         setSelectedMerchant(null);

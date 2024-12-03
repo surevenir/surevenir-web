@@ -1,10 +1,9 @@
 "use server";
 
-export async function getMarkets(): Promise<any[] | null> {
+export async function getMarkets(token: string): Promise<any[] | null> {
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
-    const token: string = process.env.NEXT_PUBLIC_API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -36,19 +35,21 @@ export async function getMarkets(): Promise<any[] | null> {
   }
 }
 
-export async function postMarket(data: {
-  name: string;
-  description: string;
-  longitude: string;
-  latitude: string;
-  image?: File;
-}): Promise<any | null> {
+export async function postMarket(
+  data: {
+    name: string;
+    description: string;
+    longitude: string;
+    latitude: string;
+    image?: File;
+  },
+  token: string
+): Promise<any | null> {
   console.log(data);
 
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:5000";
-    const token: string = process.env.NEXT_PUBLIC_API_TOKEN || "12345";
 
     if (!token) {
       console.error("Authorization token is missing.");
@@ -103,69 +104,24 @@ export async function postMarket(data: {
   }
 }
 
-export async function postMarketImages(data: {
-  id: number;
-  images: File[];
-}): Promise<any | null> {
-  try {
-    const host = process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
-    const token = process.env.NEXT_PUBLIC_API_TOKEN || "";
-
-    // Validasi lebih ketat untuk file
-    const validImages = data.images.filter(
-      (file) => file.type.startsWith("image/") && file.size <= 5 * 1024 * 1024 // max 5MB
-    );
-
-    if (validImages.length === 0) {
-      throw new Error("No valid images provided. Check file types and sizes.");
-    }
-
-    const formData = new FormData();
-    validImages.forEach((image) => {
-      formData.append("images", image);
-    });
-
-    const response = await fetch(`${host}/api/markets/${data.id}/images`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      const errorMessage = `Error posting market images: ${response.status} - ${errorText}`;
-      console.error(errorMessage);
-      throw new Error(errorMessage);
-    }
-
-    const result = await response.json();
-
-    return result.data || null;
-  } catch (error: any) {
-    console.error("Failed to post market images:", error.message);
-    return null;
-  }
-}
-
-export async function editMarket(data: {
-  id: number;
-  name: string;
-  description: string;
-  longitude: string;
-  latitude: string;
-  image?: File;
-}): Promise<any | null> {
+export async function editMarket(
+  data: {
+    id: number;
+    name: string;
+    description: string;
+    longitude: string;
+    latitude: string;
+    image?: File;
+  },
+  token: string
+): Promise<any | null> {
   console.log(data);
 
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:5000";
-    const token: string = process.env.NEXT_PUBLIC_API_TOKEN || "12345";
 
     if (!token) {
-      console.error("Authorization token is missing.");
       throw new Error("Authorization token is missing.");
     }
 
@@ -217,11 +173,13 @@ export async function editMarket(data: {
   }
 }
 
-export async function deleteMarket(id: number): Promise<any | null> {
+export async function deleteMarket(
+  id: number,
+  token: string
+): Promise<any | null> {
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
-    const token: string = process.env.NEXT_PUBLIC_API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");

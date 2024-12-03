@@ -1,11 +1,9 @@
 "use server";
 
-export async function getStatistic(): Promise<any[] | null> {
+export async function getStatistic(token: string): Promise<any[] | null> {
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
-
-    const token: string = process.env.NEXT_PUBLIC_API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");

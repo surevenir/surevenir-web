@@ -19,17 +19,16 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { LogoutButton } from "./logout-button";
+import { User } from "@/app/types/types";
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+type NavUserProps = {
+  user: User | undefined; // Menggunakan tipe User atau undefined
+};
+
+export function NavUser({ user }: NavUserProps) {
   const { isMobile } = useSidebar();
+
+  console.log(JSON.stringify(user, null, 2));
 
   return (
     <SidebarMenu>
@@ -41,12 +40,23 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="rounded-lg w-8 h-8">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarImage
+                  src={user?.profile_image_url || ""}
+                  alt={user?.full_name || "user"}
+                />
+                <AvatarFallback className="rounded-lg">
+                  {user?.full_name
+                    ? user.full_name.charAt(0).toUpperCase()
+                    : "U"}
+                </AvatarFallback>
               </Avatar>
               <div className="flex-1 grid text-left text-sm leading-tight">
-                <span className="font-semibold truncate">{user.name}</span>
-                <span className="text-xs truncate">{user.email}</span>
+                <span className="font-semibold truncate">
+                  {user?.full_name || "user"}
+                </span>
+                <span className="text-xs truncate">
+                  {user?.email || "user"}
+                </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>

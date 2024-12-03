@@ -95,3 +95,10 @@ export type Product = {
   product_categories: ProductCategoryInProduct[] | null;
   images: Image[] | null;
 };
+
+export enum MediaType {
+  MARKET = "market",
+  MERCHANT = "merchant",
+  PRODUCT = "product",
+  REVIEW = "review",
+}

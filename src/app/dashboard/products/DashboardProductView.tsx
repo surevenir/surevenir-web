@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
+import { useLoadScript } from "@react-google-maps/api";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -48,8 +48,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Category, Market, Merchant, Product } from "@/app/types/types";
-import { deleteImage } from "@/utils/imageActions";
+import {
+  Category,
+  Market,
+  MediaType,
+  Merchant,
+  Product,
+} from "@/app/types/types";
+import { deleteImage, postImages } from "@/utils/imageActions";
 import Cookies from "js-cookie";
 import {
   Popover,
@@ -77,7 +83,6 @@ import {
   editProduct,
   getProducts,
   postProduct,
-  postProductImages,
 } from "@/utils/productActions";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -91,7 +96,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu";
 
 interface DashboardProductViewProps {
   products: Product[] | [];
@@ -131,7 +135,6 @@ export default function DashboardProductView({
     merchantId: z.number(),
     categoryIds: z.string(),
     stock: z.number(),
-    // images: z.array(z.instanceof(File)),
   });
 
   type FormDataAdd = z.infer<typeof formSchemaAdd>;
@@ -143,7 +146,6 @@ export default function DashboardProductView({
     merchantId: z.number(),
     categoryIds: z.string(),
     stock: z.number(),
-    // images: z.array(z.instanceof(File)).optional(),
   });
 
   type FormDataEdit = z.infer<typeof formSchemaEdit>;
@@ -164,7 +166,6 @@ export default function DashboardProductView({
       merchantId: undefined,
       categoryIds: undefined,
       stock: undefined,
-      // images: undefined,
     },
   });
   const formEdit = useForm<FormDataEdit>({
@@ -176,7 +177,6 @@ export default function DashboardProductView({
       merchantId: undefined,
       categoryIds: undefined,
       stock: undefined,
-      // images: undefined,
     },
   });
 
@@ -187,7 +187,7 @@ export default function DashboardProductView({
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const data = await getProducts();
+      const data = await getProducts(userId as string);
       setProducts(data || []);
     } catch (error: any) {
       console.error("Error fetching products:", error.message);
@@ -200,7 +200,7 @@ export default function DashboardProductView({
     setLoading(true);
 
     try {
-      const result = await postProduct(data);
+      const result = await postProduct(data, userId as string);
 
       if (result) {
         toast.success("Product added successfully!");
@@ -242,10 +242,14 @@ export default function DashboardProductView({
 
     setLoading(true);
     try {
-      const result = await postProductImages({
-        id: selectedProduct.id,
-        images: files,
-      });
+      const result = await postImages(
+        {
+          id: selectedProduct.id,
+          images: files,
+        },
+        MediaType.PRODUCT,
+        userId as string
+      );
 
       if (result) {
         toast.success("Product images added successfully!");
@@ -281,14 +285,17 @@ export default function DashboardProductView({
     const categoryIds =
       typeof data.categoryIds === "string"
         ? data.categoryIds.split(",").map((id) => parseInt(id, 10))
-        : data.categoryIds; // Jika sudah berupa array, gunakan langsung
+        : data.categoryIds;
 
     try {
-      const result = await editProduct({
-        ...data,
-        id: selectedProduct.id,
-        categoryIds,
-      });
+      const result = await editProduct(
+        {
+          ...data,
+          id: selectedProduct.id,
+          categoryIds,
+        },
+        userId as string
+      );
 
       console.log("result", result);
 
@@ -312,7 +319,7 @@ export default function DashboardProductView({
 
     setLoading(true);
     try {
-      const result = await deleteProduct(selectedProduct.id);
+      const result = await deleteProduct(selectedProduct.id, userId as string);
       if (result) {
         toast("Successfully deleted product");
         setSelectedProduct(null);
@@ -360,15 +367,13 @@ export default function DashboardProductView({
         product.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    // Urutkan produk berdasarkan nama
     if (nameSortOrder === "asc") {
       result = result.sort((a, b) => a.name.localeCompare(b.name));
     } else if (nameSortOrder === "desc") {
       result = result.sort((a, b) => b.name.localeCompare(a.name));
     } else if (nameSortOrder === "category") {
-      // Kelompokkan produk berdasarkan kategori pertama yang ditemukan
       result = result.sort((a, b) => {
-        const categoryA = a.product_categories?.[0]?.category?.name || ""; // Pastikan product_categories ada dan kategori pertama ada
+        const categoryA = a.product_categories?.[0]?.category?.name || "";
         const categoryB = b.product_categories?.[0]?.category?.name || "";
         return categoryA.localeCompare(categoryB);
       });
@@ -639,21 +644,17 @@ export default function DashboardProductView({
                                       onCheckedChange={(checked) => {
                                         let newValue: string[];
                                         if (checked) {
-                                          // Tambahkan ID kategori yang dipilih
                                           newValue = [
                                             ...currentValue,
                                             item.id.toString(),
                                           ];
                                         } else {
-                                          // Hapus ID kategori yang dibatalkan
                                           newValue = currentValue.filter(
                                             (value) =>
                                               value !== item.id.toString()
                                           );
                                         }
 
-                                        // Update field value dengan string yang dipisahkan koma
-                                        // Jika ada lebih dari satu kategori, pisahkan dengan koma
                                         field.onChange(newValue.join(","));
                                       }}
                                     />
@@ -710,7 +711,12 @@ export default function DashboardProductView({
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{product.name}</TableCell>
                 <TableCell>{product.description}</TableCell>
-                <TableCell>{product.price}</TableCell>
+                <TableCell>
+                  {new Intl.NumberFormat("id-ID", {
+                    style: "currency",
+                    currency: "IDR",
+                  }).format(product.price)}
+                </TableCell>
                 <TableCell>{product.stock}</TableCell>
                 <TableCell className="flex gap-2">
                   {product.product_categories?.map((category) => (
@@ -842,8 +848,8 @@ export default function DashboardProductView({
                             merchantId: product.merchant_id,
                             categoryIds: product.product_categories
                               ? product.product_categories
-                                  .map((pc) => pc.category.id) // Ambil id dari category yang ada dalam product_categories
-                                  .join(",") // Gabungkan ID dengan koma
+                                  .map((pc) => pc.category.id)
+                                  .join(",")
                               : "",
                           });
                         }}
@@ -1039,7 +1045,6 @@ export default function DashboardProductView({
                                     control={formEdit.control}
                                     name="categoryIds"
                                     render={({ field }) => {
-                                      // Mengonversi field.value menjadi array, meskipun ada satu kategori
                                       const currentValue = Array.isArray(
                                         field.value
                                       )
@@ -1056,13 +1061,11 @@ export default function DashboardProductView({
                                               onCheckedChange={(checked) => {
                                                 let newValue: string[];
                                                 if (checked) {
-                                                  // Tambahkan ID kategori yang dipilih
                                                   newValue = [
                                                     ...currentValue,
                                                     item.id.toString(),
                                                   ];
                                                 } else {
-                                                  // Hapus ID kategori yang dibatalkan
                                                   newValue =
                                                     currentValue.filter(
                                                       (value) =>
@@ -1071,7 +1074,6 @@ export default function DashboardProductView({
                                                     );
                                                 }
 
-                                                // Pastikan nilai kategori disimpan dalam format string yang dipisahkan koma
                                                 field.onChange(
                                                   newValue.join(",")
                                                 );

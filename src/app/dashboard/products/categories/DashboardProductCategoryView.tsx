@@ -49,7 +49,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Category } from "@/app/types/types";
-import { getMarkets } from "@/utils/marketActions";
 import {
   deleteCategory,
   editCategory,
@@ -63,6 +62,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import TableSkeleton from "@/components/table-skeleton";
+import Cookies from "js-cookie";
 
 interface CategoryViewProps {
   categories: Category[];
@@ -98,6 +98,7 @@ export default function DashboardProductCategoryView({
   );
   const [file, setFile] = useState<File>();
   const [loading, setLoading] = useState(false);
+  const token = Cookies.get("userId");
 
   // Form handling
   const formAdd = useForm<FormDataAdd>({
@@ -122,7 +123,7 @@ export default function DashboardProductCategoryView({
 
   const fetchCategories = async () => {
     try {
-      const data = await getCategories();
+      const data = await getCategories(token as string);
       setCategories(data || []);
     } catch (error: any) {
       console.error("Error fetching categories:", error.message);
@@ -147,11 +148,15 @@ export default function DashboardProductCategoryView({
     console.log("category", data);
 
     try {
-      const result = await postCategory(data);
-      toast("Category added successfully!");
-      formAdd.reset();
-      setFile(undefined);
-      await fetchCategories();
+      const result = await postCategory(data, token as string);
+      if (result) {
+        toast("Category added successfully!");
+        formAdd.reset();
+        await fetchCategories();
+        setFile(undefined);
+      } else {
+        toast("Failed to post category");
+      }
     } catch (error: any) {
       console.error("Error adding category:", error.message);
       toast("An error occurred while adding the category.");
@@ -188,7 +193,7 @@ export default function DashboardProductCategoryView({
         rangePrice: data.rangePrice as string,
         image: data.image ? data.image : undefined,
       };
-      const result = await editCategory(updatedCategory);
+      const result = await editCategory(updatedCategory, token as string);
 
       if (result) {
         toast.success("Category updated successfully!");
@@ -210,7 +215,7 @@ export default function DashboardProductCategoryView({
 
     setLoading(true);
     try {
-      const result = await deleteCategory(selectedCategory.id);
+      const result = await deleteCategory(selectedCategory.id, token as string);
       if (result) {
         setCategories((prev) =>
           prev.filter((category) => category.id !== selectedCategory.id)
@@ -361,7 +366,17 @@ export default function DashboardProductCategoryView({
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{category.name}</TableCell>
                 <TableCell>{category.description}</TableCell>
-                <TableCell>{category.range_price}</TableCell>
+                <TableCell>
+                  {category.range_price
+                    .split("-")
+                    .map((price) =>
+                      new Intl.NumberFormat("id-ID", {
+                        style: "currency",
+                        currency: "IDR",
+                      }).format(Number(price))
+                    )
+                    .join(" - ")}
+                </TableCell>
                 <TableCell>
                   <TooltipProvider>
                     <Tooltip>

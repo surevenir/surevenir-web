@@ -1,10 +1,9 @@
 "use server";
 
-export async function getCategories(): Promise<any[] | null> {
+export async function getCategories(token: string): Promise<any[] | null> {
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
-    const token: string = process.env.NEXT_PUBLIC_API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
@@ -36,18 +35,20 @@ export async function getCategories(): Promise<any[] | null> {
   }
 }
 
-export async function postCategory(data: {
-  name: string;
-  description: string;
-  rangePrice: string;
-  image: File;
-}): Promise<any | null> {
+export async function postCategory(
+  data: {
+    name: string;
+    description: string;
+    rangePrice: string;
+    image: File;
+  },
+  token: string
+): Promise<any | null> {
   console.log(data);
 
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:5000";
-    const token: string = process.env.NEXT_PUBLIC_API_TOKEN || "12345";
 
     if (!token) {
       console.error("Authorization token is missing.");
@@ -101,19 +102,21 @@ export async function postCategory(data: {
   }
 }
 
-export async function editCategory(data: {
-  id: number;
-  name: string;
-  description: string;
-  rangePrice: string;
-  image?: File;
-}): Promise<any | null> {
+export async function editCategory(
+  data: {
+    id: number;
+    name: string;
+    description: string;
+    rangePrice: string;
+    image?: File;
+  },
+  token: string
+): Promise<any | null> {
   console.log(data);
 
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:5000";
-    const token: string = process.env.NEXT_PUBLIC_API_TOKEN || "12345";
 
     if (!token) {
       console.error("Authorization token is missing.");
@@ -171,11 +174,13 @@ export async function editCategory(data: {
   }
 }
 
-export async function deleteCategory(id: number): Promise<any | null> {
+export async function deleteCategory(
+  id: number,
+  token: string
+): Promise<any | null> {
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
-    const token: string = process.env.NEXT_PUBLIC_API_TOKEN || "";
 
     if (!token) {
       throw new Error("Authorization token is missing.");
