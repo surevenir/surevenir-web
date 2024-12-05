@@ -21,7 +21,6 @@ import { toast } from "sonner";
 import { getUserById, updateUser } from "@/utils/userActions";
 import Cookies from "js-cookie";
 import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
-import TableSkeleton from "@/components/table-skeleton";
 import DashboardProfileSkeleton from "./DashboardProfileSkeleton";
 
 const formSchema = z.object({

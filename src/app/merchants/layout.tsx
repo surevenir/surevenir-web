@@ -4,10 +4,10 @@ import Footer from "@/components/footer";
 import { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Surevenir | Markets",
+  title: "Surevenir | Merchants",
 };
 
-export default function MarketLayout({ children }: { children: ReactNode }) {
+export default function MerchantLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <NavigationBar />

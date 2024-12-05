@@ -27,10 +27,12 @@ import Cookies from "js-cookie";
 import { BorderBeam } from "./ui/border-beam";
 import { User } from "@/app/types/types";
 import { getUserById } from "@/utils/userActions";
+import { usePathname } from "next/navigation";
 
 type Role = "ADMIN" | "USER" | "NOTLOGIN";
 
 export default function NavigationBar() {
+  const params = usePathname();
   const navMain = {
     ADMIN: [
       { title: "Markets", url: "/markets" },
@@ -163,7 +165,13 @@ export default function NavigationBar() {
             {navMain[role].map((item) => (
               <NavigationMenuItem key={item.title} className="bg-transparent">
                 <Link href={item.url} legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  <NavigationMenuLink
+                    className={`${navigationMenuTriggerStyle()} ${
+                      params?.includes(item.url)
+                        ? "underline-offset-4 underline"
+                        : ""
+                    }`}
+                  >
                     {item.title}
                   </NavigationMenuLink>
                 </Link>

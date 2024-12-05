@@ -2,19 +2,19 @@
 
 import { cookies } from "next/headers";
 import { TypographyH4 } from "@/components/ui/typography";
-import ProductView from "./ProductView";
-import { getProducts } from "@/utils/productActions";
+import MerchantView from "./MerchantView";
+import { getMerchants } from "@/utils/merchantActions";
 
 export default async function MarketPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get("userId")?.value;
-  const products = (await getProducts(token as string)) || [];
+  const merchants = (await getMerchants(token as string)) || [];
 
   return (
     <>
       <div className="px-32 py-16 w-full">
-        <TypographyH4 className="pb-8">Product List</TypographyH4>
-        <ProductView products={products} />
+        <TypographyH4 className="pb-8">Merchant List</TypographyH4>
+        <MerchantView merchants={merchants} />
       </div>
     </>
   );

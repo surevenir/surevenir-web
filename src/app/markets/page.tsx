@@ -1,10 +1,9 @@
 "use server";
 
 import { cookies } from "next/headers";
-import Footer from "@/components/footer";
-import NavigationBar from "@/components/navigation-bar";
 import MarketView from "./MarketView";
 import { getMarkets } from "@/utils/marketActions";
+import { TypographyH4 } from "@/components/ui/typography";
 
 export default async function MarketPage() {
   const cookieStore = await cookies();
@@ -13,11 +12,10 @@ export default async function MarketPage() {
 
   return (
     <>
-      <NavigationBar />
-      <div className="px-32 py-4 w-full">
-        {markets && <MarketView markets={markets} />}
+      <div className="px-32 py-16 w-full">
+        <TypographyH4 className="pb-8">Market List</TypographyH4>
+        <MarketView markets={markets} />
       </div>
-      <Footer />
     </>
   );
 }

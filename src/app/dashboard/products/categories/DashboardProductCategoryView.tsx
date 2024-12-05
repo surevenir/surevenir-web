@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -63,6 +63,16 @@ import {
 } from "@/components/ui/tooltip";
 import TableSkeleton from "@/components/table-skeleton";
 import Cookies from "js-cookie";
+import { RefreshCwIcon } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface CategoryViewProps {
   categories: Category[];
@@ -98,6 +108,9 @@ export default function DashboardProductCategoryView({
   );
   const [file, setFile] = useState<File>();
   const [loading, setLoading] = useState(false);
+  const [nameSortOrder, setNameSortOrder] = useState("asc");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredCategories, setFilteredCategories] = useState(categories);
   const token = Cookies.get("userId");
 
   // Form handling
@@ -122,11 +135,14 @@ export default function DashboardProductCategoryView({
   });
 
   const fetchCategories = async () => {
+    setLoading(true);
     try {
       const data = await getCategories(token as string);
       setCategories(data || []);
     } catch (error: any) {
       console.error("Error fetching categories:", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -233,114 +249,173 @@ export default function DashboardProductCategoryView({
     }
   };
 
+  const handleSearchChange = (e: any) => {
+    setSearchQuery(e.target.value);
+  };
+
+  useEffect(() => {
+    let result = categories.filter(
+      (category) =>
+        category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        category.description.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    if (nameSortOrder === "asc") {
+      result = result.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (nameSortOrder === "desc") {
+      result = result.sort((a, b) => b.name.localeCompare(a.name));
+    }
+
+    setFilteredCategories(result);
+  }, [searchQuery, nameSortOrder, categories]);
+
   return (
-    <div className="px-8">
-      <div className="flex justify-between">
-        <h3 className="scroll-m-20 pb-4 font-semibold text-xl tracking-tight">
-          Category List
-        </h3>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button>Add Category</Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Add New Category</DialogTitle>
-              <DialogDescription>
-                Fill in the details below to create a new category.
-              </DialogDescription>
-            </DialogHeader>
-            <Form {...formAdd}>
-              <form
-                onSubmit={formAdd.handleSubmit(handleAddCategory)}
-                className="space-y-4"
-              >
-                <FormField
-                  control={formAdd.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter category name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+    <div className="px-8 pb-8">
+      <div className="flex flex-wrap justify-between items-center pb-4">
+        <div className="flex items-center gap-4">
+          <h3 className="font-semibold text-xl">Category List</h3>
+          <Button variant={"outline"} onClick={() => fetchCategories()}>
+            <RefreshCwIcon />
+          </Button>
+        </div>
+        <div className="flex items-center gap-4">
+          <Input
+            type="text"
+            placeholder="Search for..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">Filter & Sort</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuLabel>Sort and Filter</DropdownMenuLabel>
+              <DropdownMenuSeparator />
 
-                <FormField
-                  control={formAdd.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter category description"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <DropdownMenuRadioGroup value={nameSortOrder}>
+                <DropdownMenuRadioItem
+                  value="asc"
+                  onSelect={() => {
+                    setNameSortOrder("asc");
+                  }}
+                >
+                  Name Ascending
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem
+                  value="desc"
+                  onSelect={() => {
+                    setNameSortOrder("desc");
+                  }}
+                >
+                  Name Descending
+                </DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>Add Category</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Add New Category</DialogTitle>
+                <DialogDescription>
+                  Fill in the details below to create a new category.
+                </DialogDescription>
+              </DialogHeader>
+              <Form {...formAdd}>
+                <form
+                  onSubmit={formAdd.handleSubmit(handleAddCategory)}
+                  className="space-y-4"
+                >
+                  <FormField
+                    control={formAdd.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter category name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={formAdd.control}
-                  name="rangePrice"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Range Price</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter category range price"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <FormField
+                    control={formAdd.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter category description"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={formAdd.control}
-                  name="image"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Image</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          required
-                          onChange={(e) => {
-                            const selectedFile = e.target.files
-                              ? e.target.files[0]
-                              : null;
-                            if (selectedFile) {
-                              const isValid =
-                                handleSingleFileChange(selectedFile);
-                              if (isValid) {
-                                formAdd.setValue("image", selectedFile);
+                  <FormField
+                    control={formAdd.control}
+                    name="rangePrice"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Range Price</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter category range price"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={formAdd.control}
+                    name="image"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Image</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="file"
+                            required
+                            onChange={(e) => {
+                              const selectedFile = e.target.files
+                                ? e.target.files[0]
+                                : null;
+                              if (selectedFile) {
+                                const isValid =
+                                  handleSingleFileChange(selectedFile);
+                                if (isValid) {
+                                  formAdd.setValue("image", selectedFile);
+                                }
                               }
-                            }
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <DialogFooter>
-                  <Button type="submit" disabled={loading}>
-                    {loading ? "Adding..." : "Add Category"}
-                  </Button>
-                </DialogFooter>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
+                  <DialogFooter>
+                    <Button type="submit" disabled={loading}>
+                      {loading ? "Adding..." : "Add Category"}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {loading && <TableSkeleton />}
@@ -361,7 +436,7 @@ export default function DashboardProductCategoryView({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {categories.map((category, index) => (
+            {filteredCategories.map((category, index) => (
               <TableRow key={category.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{category.name}</TableCell>
