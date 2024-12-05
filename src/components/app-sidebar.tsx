@@ -57,10 +57,6 @@ const data = {
           title: "Market Details",
           url: "/dashboard/markets",
         },
-        {
-          title: "Market Reviews",
-          url: "/dashboard/markets/reviews",
-        },
       ],
     },
     {
@@ -71,10 +67,6 @@ const data = {
         {
           title: "Merchant Details",
           url: "/dashboard/merchants",
-        },
-        {
-          title: "Merchant Reviews",
-          url: "/dashboard/merchants/reviews",
         },
       ],
     },
