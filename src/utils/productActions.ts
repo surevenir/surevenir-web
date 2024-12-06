@@ -35,6 +35,50 @@ export async function getProducts(token: string): Promise<any[] | null> {
   }
 }
 
+export async function getProductBySlug(
+  slug: string,
+  token: string,
+  userId: string
+): Promise<any[] | null> {
+  try {
+    const host: string =
+      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
+
+    if (!token) {
+      throw new Error("Authorization token is missing.");
+    }
+
+    const response = await fetch(
+      `${host}/api/products/slug/${slug}?user_id=${userId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorMessage = `Error fetching product: ${response.status} ${response.statusText}`;
+      throw new Error(errorMessage);
+    }
+
+    const result = await response.json();
+
+    console.log("result", JSON.stringify(result, null, 2));
+
+    if (result.success && result.data) {
+      return result.data;
+    } else {
+      throw new Error("Invalid API response format.");
+    }
+  } catch (error: any) {
+    console.error(`Failed to fetch product:`, error.message);
+    return null;
+  }
+}
+
 export async function postProduct(
   data: {
     name: string;
@@ -179,6 +223,84 @@ export async function deleteProduct(
     }
   } catch (error: any) {
     console.error("Failed to delete product:", error.message);
+    return null;
+  }
+}
+
+export async function addProductToFavorite(
+  id: number,
+  token: string
+): Promise<any | null> {
+  try {
+    const host: string =
+      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
+
+    if (!token) {
+      throw new Error("Authorization token is missing.");
+    }
+
+    // Request POST ke endpoint dengan ID
+    const response = await fetch(`${host}/api/products/${id}/favorites`, {
+      method: "POST",
+      headers: {
+        // "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorMessage = `Error deleting product: ${response.status} ${response.statusText}`;
+      throw new Error(errorMessage);
+    }
+
+    const result = await response.json();
+
+    if (result.success) {
+      return result.data;
+    } else {
+      throw new Error("Invalid API response format.");
+    }
+  } catch (error: any) {
+    console.error("Failed to add categories:", error.message);
+    return null;
+  }
+}
+
+export async function deleteProductFromFavorite(
+  id: number,
+  token: string
+): Promise<any | null> {
+  try {
+    const host: string =
+      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
+
+    if (!token) {
+      throw new Error("Authorization token is missing.");
+    }
+
+    // Request DELETE ke endpoint dengan ID
+    const response = await fetch(`${host}/api/products/${id}/favorites`, {
+      method: "DELETE",
+      headers: {
+        // "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorMessage = `Error deleting favorite: ${response.status} ${response.statusText}`;
+      throw new Error(errorMessage);
+    }
+
+    const result = await response.json();
+
+    if (result.success) {
+      return result.data;
+    } else {
+      throw new Error("Invalid API response format.");
+    }
+  } catch (error: any) {
+    console.error("Failed to add favorite:", error.message);
     return null;
   }
 }

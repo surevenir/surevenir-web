@@ -37,11 +37,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
-  // if (user) {
-  //   if (user.role !== "ADMIN" && pathname.includes("/dashboard")) {
-  //     return NextResponse.redirect(new URL("/", request.url));
-  //   }
-  // }
+  if (user) {
+    if (user.role !== "ADMIN" && pathname.includes("/dashboard")) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+  }
 
   // Izinkan akses ke public routes tanpa validasi
   if (PUBLIC_ROUTES.includes(pathname)) {

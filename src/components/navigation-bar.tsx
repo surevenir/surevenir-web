@@ -39,6 +39,7 @@ export default function NavigationBar() {
       { title: "Merchants", url: "/merchants" },
       { title: "Products", url: "/products" },
       { title: "Predict", url: "/predict" },
+      { title: "Profile", url: "/profile" },
       { title: "Dashboard", url: "/dashboard" },
     ],
     USER: [

@@ -57,7 +57,7 @@ export default function ProductView({
                 }).format(product.price)}
               </CardDescription>
 
-              <Link href={`/merchants/${product.slug}`}>
+              <Link href={`/products/${product.slug}`}>
                 <ShinyButton className="w-full">See Details</ShinyButton>
               </Link>
             </CardHeader>

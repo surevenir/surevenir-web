@@ -127,6 +127,33 @@ export type Product = {
   images: Image[] | null;
 };
 
+export type ProductDetail = {
+  id: number;
+  slug: string | null;
+  name: string;
+  description: string;
+  price: number;
+  merchant_id: number;
+  stock: number;
+  is_favorite: boolean;
+  createdAt: string;
+  updatedAt: string;
+  merchant: MerchantInProduct;
+  product_categories: ProductCategoryInProduct[] | null;
+  images: Image[] | null;
+  reviews: Review[] | null;
+};
+
+export type Review = {
+  id: number;
+  rating: number;
+  comment: string;
+  user_id: string;
+  product_id: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export enum MediaType {
   MARKET = "market",
   MERCHANT = "merchant",
