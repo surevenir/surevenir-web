@@ -47,7 +47,9 @@ export default function MarketView({
                   <TypographySmall>4.5</TypographySmall>
                 </div>
               </div>
-              <CardDescription>{market.description}</CardDescription>
+              <CardDescription className="line-clamp-4">
+                {market.description}
+              </CardDescription>
               <Link href={`/markets/${market.slug}`}>
                 <ShinyButton className="inline-block">See Details</ShinyButton>
               </Link>

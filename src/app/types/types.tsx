@@ -67,6 +67,23 @@ export type Merchant = {
   images: Image[] | null;
 };
 
+export type MerchantWithProducts = {
+  id: number;
+  slug: string | null;
+  name: string;
+  description: string;
+  profile_image_url: string | null;
+  addresses: string;
+  longitude: string;
+  latitude: string;
+  user_id: string;
+  market_id: number;
+  createdAt: string;
+  updatedAt: string;
+  images: Image[] | null;
+  products: Product[] | null;
+};
+
 export type Category = {
   id: number;
   name: string;

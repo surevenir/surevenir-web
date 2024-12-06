@@ -47,7 +47,9 @@ export default function ProductView({
                   <TypographySmall>4.5</TypographySmall>
                 </div>
               </div>
-              <CardDescription>{product.description}</CardDescription>
+              <CardDescription className="line-clamp-4">
+                {product.description}
+              </CardDescription>
               <CardDescription>
                 {new Intl.NumberFormat("id-ID", {
                   style: "currency",
