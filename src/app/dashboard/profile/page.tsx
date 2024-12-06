@@ -11,7 +11,9 @@ export default async function DashboardProfilePage() {
   const user = await getUserById(token as string, token as string);
   return (
     <>
-      <DashboardProfileView user={user} />
+      <div className="px-8">
+        <DashboardProfileView user={user} />
+      </div>
     </>
   );
 }

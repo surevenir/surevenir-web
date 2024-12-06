@@ -114,7 +114,7 @@ type ProductCategoryInProduct = {
 
 export type Product = {
   id: number;
-  slug: string | null;
+  slug: string;
   name: string;
   description: string;
   price: number;
@@ -142,6 +142,23 @@ export type ProductDetail = {
   product_categories: ProductCategoryInProduct[] | null;
   images: Image[] | null;
   reviews: Review[] | null;
+};
+
+export type CartDetail = {
+  id: number;
+  slug: string;
+  user_id: string;
+  product_id: number;
+  quantity: number;
+  createdAt: string;
+  updatedAt: string;
+  subtotal_price: number;
+  product: Product;
+};
+
+export type Cart = {
+  cart: CartDetail[];
+  total_price: number;
 };
 
 export type Review = {

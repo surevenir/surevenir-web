@@ -217,7 +217,7 @@ export default function MarketDetailPage() {
                             <TypographySmall>4.5</TypographySmall>
                           </div>
                         </div>
-                        <CardDescription>
+                        <CardDescription className="line-clamp-4">
                           {merchant.description}
                         </CardDescription>
                         <Link href={`/merchants/${merchant.slug}`}>

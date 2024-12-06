@@ -141,7 +141,7 @@ export default function DashboardProfileView({
 
   return (
     <>
-      <div className="px-8">
+      <div className="">
         <TypographyH4 className="pb-2">Profile</TypographyH4>
         <TypographyMuted className="pb-2">
           This is how others will see you on the site.
