@@ -37,6 +37,20 @@ export type Market = {
   images: Image[] | null;
 };
 
+export type MarketWithMerchants = {
+  id: number;
+  slug: string | null;
+  name: string;
+  description: string;
+  profile_image_url: string | null;
+  longitude: string;
+  latitude: string;
+  createdAt: string;
+  updatedAt: string;
+  images: Image[] | null;
+  merchants: Merchant[];
+};
+
 export type Merchant = {
   id: number;
   slug: string | null;

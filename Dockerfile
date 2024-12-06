@@ -14,7 +14,7 @@ RUN npm install --production
 COPY . .
 
 # Menjalankan build Next.js
-RUN npm run build
+# RUN npm build
 
 # Menentukan port yang akan digunakan oleh aplikasi (Cloud Run default adalah 8080)
 EXPOSE 8080

@@ -3,7 +3,7 @@
 import { getDataBySlug } from "@/utils/actions";
 import { useParams } from "next/navigation";
 import Cookies from "js-cookie";
-import { Market, MediaType } from "@/app/types/types";
+import { Market, MarketWithMerchants, MediaType } from "@/app/types/types";
 import { useEffect, useState } from "react";
 import {
   Dialog,
@@ -26,16 +26,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { TypographyH4, TypographySmall } from "@/components/ui/typography";
+import {
+  TypographyH3,
+  TypographyH4,
+  TypographySmall,
+} from "@/components/ui/typography";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Heart } from "lucide-react";
+import { Heart, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MarketDynamicBreadcrumb } from "./MarketDynamicBreadcrumb";
+import Link from "next/link";
+import ShinyButton from "@/components/ui/shiny-button";
 
 export default function MarketDetailPage() {
   const params = useParams<{ id: string }>();
   const id = params.id;
-  const [market, setMarket] = useState<Market | null>(null);
+  const [market, setMarket] = useState<MarketWithMerchants | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [images, setImages] = useState<string[]>();
   const token = Cookies.get("userId");
@@ -68,9 +74,6 @@ export default function MarketDetailPage() {
 
   return (
     <div className="px-32 py-12 w-full">
-      <div className="pb-4">
-        <MarketDynamicBreadcrumb market={market as Market} />
-      </div>
       {loading && (
         <div className="gap-8 grid grid-cols-5">
           <div className="top-24 sticky col-span-2 h-fit">
@@ -101,8 +104,11 @@ export default function MarketDetailPage() {
         </div>
       )}
       {!loading && market && (
-        <div className="gap-8 grid grid-cols-5">
+        <div className="gap-6 grid grid-cols-5">
           <div className="top-24 sticky col-span-2 h-fit">
+            <div className="pb-4">
+              <MarketDynamicBreadcrumb market={market as Market} />
+            </div>
             {market.profile_image_url && (
               <img
                 src={market.profile_image_url}
@@ -158,9 +164,15 @@ export default function MarketDetailPage() {
             </Dialog>
           </div>
           <div className="col-span-3">
-            <div className="grid grid-cols-3">
+            <div className="gap-6 grid grid-cols-3">
               <div className="col-span-2">
-                <TypographyH4>{market.name}</TypographyH4>
+                <div className="flex justify-between items-center pb-2">
+                  <TypographyH4>{market.name}</TypographyH4>
+                  <div className="flex items-center gap-2">
+                    <Star width={15} height={15} />{" "}
+                    <TypographySmall>4.5</TypographySmall>
+                  </div>
+                </div>
                 <TypographySmall>{market.description}</TypographySmall>
               </div>
               <div className="col-span-1">
@@ -179,9 +191,46 @@ export default function MarketDetailPage() {
                 </Card>
               </div>
             </div>
-            {/* <div className="py-8">
-              <TypographyH4>Reviews</TypographyH4>
-            </div> */}
+            {market.merchants.length > 0 && (
+              <>
+                <TypographyH4 className="pt-8 pb-4">
+                  Merchant in {market.name}
+                </TypographyH4>
+                <div className="grid grid-cols-3">
+                  {market.merchants.map((merchant) => (
+                    <Card className="overflow-hidden" key={merchant.id}>
+                      {merchant.profile_image_url && (
+                        <img
+                          src={merchant.profile_image_url}
+                          alt="Gambar"
+                          className="w-full h-36 object-cover"
+                        />
+                      )}
+                      {merchant.profile_image_url == null && (
+                        <Skeleton className="w-full h-36" />
+                      )}
+                      <CardHeader className="p-4">
+                        <div className="flex justify-between">
+                          <CardTitle>{merchant.name}</CardTitle>
+                          <div className="flex items-center gap-2">
+                            <Star width={15} height={15} />{" "}
+                            <TypographySmall>4.5</TypographySmall>
+                          </div>
+                        </div>
+                        <CardDescription>
+                          {merchant.description}
+                        </CardDescription>
+                        <Link href={`/merchants/${merchant.slug}`}>
+                          <ShinyButton className="inline-block">
+                            See Details
+                          </ShinyButton>
+                        </Link>
+                      </CardHeader>
+                    </Card>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
