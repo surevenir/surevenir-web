@@ -3,7 +3,6 @@ import "./globals.css";
 import { monitorTokenRefresh } from "@/utils/refreshToken";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
-
 import { Roboto } from "next/font/google";
 
 const roboto = Roboto({
@@ -16,12 +15,13 @@ export const metadata: Metadata = {
   title: "Surevenir",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   monitorTokenRefresh();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body

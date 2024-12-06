@@ -72,7 +72,7 @@ export function LoginForm() {
         router.push("/dashboard");
       } else {
         toast("Welcome Home");
-        router.push("/profile");
+        router.push("/");
       }
     } catch (err: any) {
       console.error("Login failed:", err);
