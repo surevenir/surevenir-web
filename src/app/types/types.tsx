@@ -144,6 +144,20 @@ export type ProductDetail = {
   reviews: Review[] | null;
 };
 
+export type ProductInCart = {
+  id: number;
+  slug: string;
+  name: string;
+  description: string;
+  price: number;
+  merchant_id: number;
+  stock: number;
+  createdAt: string;
+  updatedAt: string;
+  merchant: MerchantInProduct;
+  images: string[] | null;
+};
+
 export type CartDetail = {
   id: number;
   slug: string;
@@ -153,7 +167,7 @@ export type CartDetail = {
   createdAt: string;
   updatedAt: string;
   subtotal_price: number;
-  product: Product;
+  product: ProductInCart;
 };
 
 export type Cart = {

@@ -26,11 +26,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  TypographyH3,
-  TypographyH4,
-  TypographySmall,
-} from "@/components/ui/typography";
+import { TypographyH4, TypographySmall } from "@/components/ui/typography";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Heart, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -43,7 +39,6 @@ export default function MarketDetailPage() {
   const id = params.id;
   const [market, setMarket] = useState<MarketWithMerchants | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [images, setImages] = useState<string[]>();
   const token = Cookies.get("userId");
 
   const fetchMarket = async () => {
@@ -131,7 +126,7 @@ export default function MarketDetailPage() {
                       <img
                         src={image.url}
                         alt="Gambar Pasar"
-                        className="rounded-md w-full overflow-hidden aspect-auto object-cover"
+                        className="rounded-md w-full h-24 overflow-hidden aspect-auto object-cover"
                       />
                     </DialogTrigger>
                   ))}

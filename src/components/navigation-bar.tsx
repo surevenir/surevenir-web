@@ -11,7 +11,10 @@ import {
 } from "@/components/ui/navigation-menu";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
+  SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -61,6 +64,7 @@ export default function NavigationBar() {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<Role>("NOTLOGIN");
   const [userId, setUserId] = useState<string | null>(null);
+  const [position, setPosition] = useState<string | null>("");
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
@@ -183,7 +187,9 @@ export default function NavigationBar() {
         <div className="flex items-center gap-2">
           <ModeToggle />
           {isLoggedIn ? (
-            <LogoutButton />
+            <>
+              <LogoutButton />
+            </>
           ) : (
             <Link href={"/auth/login"}>
               <RainbowButton className="px-4 text-sm">
