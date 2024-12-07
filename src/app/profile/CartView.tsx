@@ -9,18 +9,33 @@ import { Cart } from "../types/types";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect } from "react";
+import { getCarts, updateProductInCart } from "@/utils/cartActions";
+import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 interface CartViewProps {
   cart: Cart;
 }
 
 export default function CartView({ cart }: CartViewProps) {
-  // State untuk item yang dipilih
+  const [carts, setCarts] = useState(cart);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
-  const [selectAll, setSelectAll] = useState<boolean>(true); // State untuk checkbox "Pilih Semua"
+  const [selectAll, setSelectAll] = useState<boolean>(true);
+  const [loadingIds, setLoadingIds] = useState<number[]>([]); // State untuk melacak tombol loading
+  const token = Cookies.get("userId");
 
-  // Inisialisasi selectedItems dan totalPrice saat cart pertama kali dimuat
+  const fetchCarts = async () => {
+    try {
+      const cartData = await getCarts(token as string);
+      if (cartData) {
+        setCarts(cartData);
+      }
+    } catch (error: any) {
+      console.error("Error fetching carts:", error.message);
+    }
+  };
+
   useEffect(() => {
     if (cart) {
       const allItemIds = cart.cart.map((item) => item.id);
@@ -33,7 +48,6 @@ export default function CartView({ cart }: CartViewProps) {
     }
   }, [cart]);
 
-  // Update selectedItems berdasarkan selectAll
   useEffect(() => {
     if (selectAll) {
       const allItemIds = cart.cart.map((item) => item.id);
@@ -43,7 +57,57 @@ export default function CartView({ cart }: CartViewProps) {
     }
   }, [selectAll, cart]);
 
-  // Fungsi untuk menangani perubahan checkbox item
+  useEffect(() => {
+    const newTotal = carts.cart
+      .filter((item) => selectedItems.includes(item.id))
+      .reduce((sum, item) => sum + item.subtotal_price, 0);
+    setTotalPrice(newTotal);
+  }, [selectedItems, carts]);
+
+  const handleUpdateQuantity = async (cartId: number, newQuantity: number) => {
+    setLoadingIds((prev) => [...prev, cartId]); // Tambahkan ID ke loadingIds
+    try {
+      const result = await updateProductInCart(
+        cartId,
+        newQuantity,
+        token as string
+      );
+      if (result) {
+        toast.success("Cart updated successfully!");
+        fetchCarts();
+      } else {
+        toast.error("Failed to update cart");
+      }
+    } catch (error: any) {
+      console.error("Error updating cart:", error.message);
+      toast.error(error.message || "An error occurred while updating cart.");
+    } finally {
+      setLoadingIds((prev) => prev.filter((id) => id !== cartId)); // Hapus ID dari loadingIds
+    }
+  };
+
+  const incrementQuantity = (itemId: number) => {
+    const updatedCarts = { ...carts };
+    const item = updatedCarts.cart.find((item) => item.id === itemId);
+    if (item) {
+      item.quantity += 1;
+      item.subtotal_price = item.quantity * item.product.price;
+      setCarts(updatedCarts);
+      handleUpdateQuantity(itemId, item.quantity);
+    }
+  };
+
+  const decrementQuantity = (itemId: number) => {
+    const updatedCarts = { ...carts };
+    const item = updatedCarts.cart.find((item) => item.id === itemId);
+    if (item && item.quantity > 1) {
+      item.quantity -= 1;
+      item.subtotal_price = item.quantity * item.product.price;
+      setCarts(updatedCarts);
+      handleUpdateQuantity(itemId, item.quantity);
+    }
+  };
+
   const handleSelect = (id: number) => {
     setSelectedItems((prev) => {
       if (prev.includes(id)) {
@@ -54,21 +118,12 @@ export default function CartView({ cart }: CartViewProps) {
     });
   };
 
-  // Update totalPrice setiap kali selectedItems berubah
-  useEffect(() => {
-    const newTotal = cart.cart
-      .filter((item) => selectedItems.includes(item.id))
-      .reduce((sum, item) => sum + item.subtotal_price, 0);
-    setTotalPrice(newTotal);
-  }, [selectedItems, cart]);
-
   return (
     <>
       <div className="flex justify-center">
-        {cart && (
+        {carts && (
           <div className="w-96">
             <TypographyH3 className="py-4 text-center">Cart</TypographyH3>
-            {/* Checkbox untuk Select All */}
             <div className="flex items-center gap-2 py-2">
               <Checkbox
                 id="select-all"
@@ -80,7 +135,7 @@ export default function CartView({ cart }: CartViewProps) {
               </label>
             </div>
             <div className="flex flex-col gap-4 py-4">
-              {cart.cart.map((item) => (
+              {carts.cart.map((item) => (
                 <div className="flex gap-2" key={item.id}>
                   <Checkbox
                     id={`item-${item.id}`}
@@ -102,7 +157,23 @@ export default function CartView({ cart }: CartViewProps) {
                         }).format(item.subtotal_price)}
                       </p>
                     </div>
-                    <TypographyMuted>Quantity: {item.quantity}</TypographyMuted>
+                    <div className="flex justify-end items-center gap-2 py-2">
+                      <Button
+                        variant={"outline"}
+                        onClick={() => decrementQuantity(item.id)}
+                        disabled={loadingIds.includes(item.id)}
+                      >
+                        -
+                      </Button>
+                      <TypographyMuted>{item.quantity}</TypographyMuted>
+                      <Button
+                        variant={"outline"}
+                        onClick={() => incrementQuantity(item.id)}
+                        disabled={loadingIds.includes(item.id)}
+                      >
+                        +
+                      </Button>
+                    </div>
                     <TypographyMuted>
                       At: {item.product.merchant.name}
                     </TypographyMuted>
