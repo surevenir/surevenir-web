@@ -6,14 +6,15 @@ import DashboardProfileView from "../dashboard/profile/DashboardProfileView";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CartView from "./CartView";
 import CheckoutView from "./CheckoutView";
-import { getCarts } from "@/utils/cartActions";
-import { Cart } from "../types/types";
+import { getCarts, getCheckout } from "@/utils/cartActions";
+import { Cart, Checkout } from "../types/types";
 
 export default async function ProfilePage() {
   const cookieStore = await cookies();
   const token = cookieStore.get("userId")?.value;
   const user = await getUserById(token as string, token as string);
   const cartData = await getCarts(token as string);
+  const checkoutData = await getCheckout(token as string);
 
   if (!cartData) {
     console.log("Cart data not found or has incorrect format");
@@ -24,7 +25,17 @@ export default async function ProfilePage() {
     );
   }
 
+  if (!checkoutData) {
+    console.log("Checkout data not found or has incorrect format");
+    return (
+      <div>
+        <h1>No Checkout Found</h1>
+      </div>
+    );
+  }
+
   const cart: Cart = cartData;
+  const checkout: Checkout[] = checkoutData;
 
   return (
     <>
@@ -44,7 +55,7 @@ export default async function ProfilePage() {
             <CartView cart={cart} />
           </TabsContent>
           <TabsContent value="checkout">
-            <CheckoutView />
+            <CheckoutView checkout={checkout} />
           </TabsContent>
         </Tabs>
       </div>

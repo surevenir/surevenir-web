@@ -175,6 +175,30 @@ export type Cart = {
   total_price: number;
 };
 
+export type Checkout = {
+  id: number;
+  slug: string;
+  user_id: string;
+  total_price: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  checkout_details: CheckoutDetail[];
+};
+
+export type CheckoutDetail = {
+  id: number;
+  checkout_id: number;
+  product_id: number | null;
+  product_identity: string;
+  product_quantity: number;
+  product_price: number;
+  product_subtotal: number;
+  createdAt: string;
+  updatedAt: string;
+  product: Product;
+};
+
 export type Review = {
   id: number;
   rating: number;
