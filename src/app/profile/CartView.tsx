@@ -9,9 +9,21 @@ import { Cart } from "../types/types";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect } from "react";
-import { getCarts, updateProductInCart } from "@/utils/cartActions";
+import { deleteCart, getCarts, updateProductInCart } from "@/utils/cartActions";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
+import { Trash2Icon } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface CartViewProps {
   cart: Cart;
@@ -86,6 +98,24 @@ export default function CartView({ cart }: CartViewProps) {
     }
   };
 
+  const handleDeleteCart = async (cartId: number) => {
+    setLoadingIds((prev) => [...prev, cartId]); // Tambahkan ID ke loadingIds
+    try {
+      const result = await deleteCart(cartId, token as string);
+      if (result) {
+        toast.success("Cart deleted successfully!");
+        await fetchCarts(); // Fetch ulang carts setelah berhasil menghapus
+      } else {
+        toast.error("Failed to delete cart");
+      }
+    } catch (error: any) {
+      console.error("Error deleting cart:", error.message);
+      toast.error(error.message || "An error occurred while deleting cart.");
+    } finally {
+      setLoadingIds((prev) => prev.filter((id) => id !== cartId)); // Hapus ID dari loadingIds
+    }
+  };
+
   const incrementQuantity = (itemId: number) => {
     const updatedCarts = { ...carts };
     const item = updatedCarts.cart.find((item) => item.id === itemId);
@@ -147,7 +177,7 @@ export default function CartView({ cart }: CartViewProps) {
                     alt={item.product?.name || "Product Image"}
                     className="rounded-sm w-20 h-16 object-cover"
                   />
-                  <div className="flex flex-col gap-1 w-full">
+                  <div className="gap-1 w-full">
                     <div className="flex justify-between">
                       <TypographyLarge>{item.product.name}</TypographyLarge>
                       <p className="font-bold">
@@ -157,26 +187,59 @@ export default function CartView({ cart }: CartViewProps) {
                         }).format(item.subtotal_price)}
                       </p>
                     </div>
-                    <div className="flex justify-end items-center gap-2 py-2">
-                      <Button
-                        variant={"outline"}
-                        onClick={() => decrementQuantity(item.id)}
-                        disabled={loadingIds.includes(item.id)}
-                      >
-                        -
-                      </Button>
-                      <TypographyMuted>{item.quantity}</TypographyMuted>
-                      <Button
-                        variant={"outline"}
-                        onClick={() => incrementQuantity(item.id)}
-                        disabled={loadingIds.includes(item.id)}
-                      >
-                        +
-                      </Button>
+                    <div className="flex justify-between">
+                      <TypographyMuted>
+                        At: {item.product.merchant.name}
+                      </TypographyMuted>
+
+                      <div className="flex justify-end items-center gap-2">
+                        <Button
+                          variant={"outline"}
+                          onClick={() => decrementQuantity(item.id)}
+                          disabled={loadingIds.includes(item.id)}
+                        >
+                          -
+                        </Button>
+                        <TypographyMuted>{item.quantity}</TypographyMuted>
+                        <Button
+                          variant={"outline"}
+                          onClick={() => incrementQuantity(item.id)}
+                          disabled={loadingIds.includes(item.id)}
+                        >
+                          +
+                        </Button>
+                      </div>
                     </div>
-                    <TypographyMuted>
-                      At: {item.product.merchant.name}
-                    </TypographyMuted>
+
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant={"destructive"}
+                          disabled={loadingIds.includes(item.id)} // Tombol dinonaktifkan jika item sedang diproses
+                        >
+                          <Trash2Icon />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you sure you want to remove this item?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. Removing this item
+                            will permanently delete it from your cart.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDeleteCart(item.id)}
+                          >
+                            Remove Item
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               ))}
