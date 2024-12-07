@@ -158,8 +158,7 @@ export async function deleteCart(
 }
 
 export async function checkoutProductInCart(
-  cartId: number,
-  quantity: number,
+  productIds: number[],
   token: string
 ): Promise<any | null> {
   try {
@@ -170,18 +169,18 @@ export async function checkoutProductInCart(
       throw new Error("Authorization token is missing.");
     }
 
-    // Request PATCH ke endpoint dengan ID
-    const response = await fetch(`${host}/api/carts/${cartId}`, {
-      method: "PATCH",
+    // Request POST ke endpoint dengan ID
+    const response = await fetch(`${host}/api/carts/checkout`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ quantity: quantity }),
+      body: JSON.stringify({ product_ids: productIds }),
     });
 
     if (!response.ok) {
-      const errorMessage = `Error update product in cart: ${response.status} ${response.statusText}`;
+      const errorMessage = `Error checkout in cart: ${response.status} ${response.statusText}`;
       throw new Error(errorMessage);
     }
 
@@ -193,7 +192,7 @@ export async function checkoutProductInCart(
       throw new Error("Invalid API response format.");
     }
   } catch (error: any) {
-    console.error("Failed to update product in cart:", error.message);
+    console.error("Failed to checkout in cart:", error.message);
     return null;
   }
 }
