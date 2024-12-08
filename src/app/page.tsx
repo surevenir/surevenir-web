@@ -52,7 +52,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <>
+    <div className="overflow-x-hidden">
       <NavigationBar />
       <div className="px-8 md:px-16 lg:px-32 w-full">
         <div className="flex flex-col justify-center py-16 w-full">
@@ -89,7 +89,7 @@ export default function HomePage() {
             />
             <BorderBeam duration={12} delay={9} />
           </div>
-          <div className="dark:block relative hidden">
+          <div className="dark:block relative hidden mt-32">
             <HeroVideoDialog
               className=""
               animationStyle="from-center"
@@ -109,23 +109,71 @@ export default function HomePage() {
             className="flex flex-col justify-center py-32"
           >
             <AccordionItem value="item-1">
-              <AccordionTrigger>Is it accessible?</AccordionTrigger>
+              <AccordionTrigger>What is Surevenir?</AccordionTrigger>
               <AccordionContent>
-                Yes. It adheres to the WAI-ARIA design pattern.
+                Surevenir is an application that scans souvenirs to provide
+                their name, similar products, and pricing to prevent scams. It
+                also features a marketplace.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2">
-              <AccordionTrigger>Is it styled?</AccordionTrigger>
+              <AccordionTrigger>
+                How does the scanning feature work?
+              </AccordionTrigger>
               <AccordionContent>
-                Yes. It comes with default styles that matches the other
-                components&apos; aesthetic.
+                The scanning feature uses image recognition technology to
+                identify souvenirs and provide relevant details, including
+                similar items and their prices.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-3">
-              <AccordionTrigger>Is it animated?</AccordionTrigger>
+              <AccordionTrigger>Is Surevenir user-friendly?</AccordionTrigger>
               <AccordionContent>
-                Yes. It&apos;s animated by default, but you can disable it if
-                you prefer.
+                Yes. Surevenir is designed with an intuitive user interface,
+                making it easy for all users to navigate and use.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-4">
+              <AccordionTrigger>
+                Does it include a marketplace?
+              </AccordionTrigger>
+              <AccordionContent>
+                Yes. Surevenir includes a built-in marketplace where users can
+                browse and purchase souvenirs securely.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-5">
+              <AccordionTrigger>
+                Is pricing information reliable?
+              </AccordionTrigger>
+              <AccordionContent>
+                Yes. Pricing information is sourced from verified sellers to
+                ensure accuracy and transparency.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-6">
+              <AccordionTrigger>
+                Can it detect counterfeit items?
+              </AccordionTrigger>
+              <AccordionContent>
+                Yes. Surevenir helps identify authentic souvenirs and highlights
+                products that might not meet authenticity standards.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-7">
+              <AccordionTrigger>Is it secure?</AccordionTrigger>
+              <AccordionContent>
+                Yes. Surevenir uses robust encryption to protect user data and
+                ensure safe transactions in the marketplace.
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-8">
+              <AccordionTrigger>
+                Is it compatible with all devices?
+              </AccordionTrigger>
+              <AccordionContent>
+                Yes. Surevenir is designed to work seamlessly across
+                smartphones, tablets, and desktops.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
@@ -157,6 +205,6 @@ export default function HomePage() {
           }}
         />
       </div>
-    </>
+    </div>
   );
 }

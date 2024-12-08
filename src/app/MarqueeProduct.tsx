@@ -8,22 +8,64 @@ import Link from "next/link";
 
 const reviews = [
   {
-    img: "https://avatar.vercel.sh/jack",
+    img: "/product-image/1.png",
   },
   {
-    img: "https://avatar.vercel.sh/jill",
+    img: "/product-image/2.png",
   },
   {
-    img: "https://avatar.vercel.sh/john",
+    img: "/product-image/3.png",
   },
   {
-    img: "https://avatar.vercel.sh/jane",
+    img: "/product-image/4.png",
   },
   {
-    img: "https://avatar.vercel.sh/jenny",
+    img: "/product-image/5.png",
   },
   {
-    img: "https://avatar.vercel.sh/james",
+    img: "/product-image/6.png",
+  },
+  {
+    img: "/product-image/7.png",
+  },
+  {
+    img: "/product-image/8.png",
+  },
+  {
+    img: "/product-image/9.png",
+  },
+  {
+    img: "/product-image/10.png",
+  },
+  {
+    img: "/product-image/11.png",
+  },
+  {
+    img: "/product-image/12.png",
+  },
+  {
+    img: "/product-image/13.png",
+  },
+  {
+    img: "/product-image/14.png",
+  },
+  {
+    img: "/product-image/15.png",
+  },
+  {
+    img: "/product-image/16.png",
+  },
+  {
+    img: "/product-image/17.png",
+  },
+  {
+    img: "/product-image/18.png",
+  },
+  {
+    img: "/product-image/19.png",
+  },
+  {
+    img: "/product-image/20.png",
   },
 ];
 

@@ -191,7 +191,7 @@ export default function MarketDetailPage() {
                 <TypographyH4 className="pt-8 pb-4">
                   Merchant in {market.name}
                 </TypographyH4>
-                <div className="grid grid-cols-3">
+                <div className="gap-4 grid grid-cols-3">
                   {market.merchants.map((merchant) => (
                     <Card className="overflow-hidden" key={merchant.id}>
                       {merchant.profile_image_url && (
