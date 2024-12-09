@@ -66,8 +66,6 @@ export async function getProductBySlug(
 
     const result = await response.json();
 
-    console.log("result", JSON.stringify(result, null, 2));
-
     if (result.success && result.data) {
       return result.data;
     } else {
@@ -91,8 +89,6 @@ export async function postProduct(
   },
   token: string
 ): Promise<any | null> {
-  console.log(data);
-
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:5000";
@@ -144,8 +140,6 @@ export async function editProduct(
   },
   token: string
 ): Promise<any | null> {
-  console.log(data);
-
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:5000";

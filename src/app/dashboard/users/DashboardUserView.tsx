@@ -84,8 +84,6 @@ export default function DashboardUserView({
 
     // Call the updateUser function with user ID and selected role
     setLoading(true);
-    console.log("selectedUser", selectedUser);
-    console.log("selectedRole", selectedRole);
 
     try {
       const result = await updateUser(

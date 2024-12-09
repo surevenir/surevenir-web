@@ -98,8 +98,6 @@ export default function ProductDetailPage() {
         token as string
       );
 
-      console.log("result :", result);
-
       if (result) {
         toast.success("Successfully add favorite");
         setisFavorite(true);
@@ -123,8 +121,6 @@ export default function ProductDetailPage() {
         token as string
       );
 
-      console.log("result :", result);
-
       if (result) {
         toast.success("Successfully add to cart");
       } else {
@@ -145,8 +141,6 @@ export default function ProductDetailPage() {
         product?.id as number,
         token as string
       );
-
-      console.log("result :", result);
 
       if (result) {
         toast.success("Successfully delete favorite");

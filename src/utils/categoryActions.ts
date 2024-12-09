@@ -44,8 +44,6 @@ export async function postCategory(
   },
   token: string
 ): Promise<any | null> {
-  console.log(data);
-
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:5000";
@@ -112,8 +110,6 @@ export async function editCategory(
   },
   token: string
 ): Promise<any | null> {
-  console.log(data);
-
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:5000";

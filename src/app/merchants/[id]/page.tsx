@@ -38,14 +38,29 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import ShinyButton from "@/components/ui/shiny-button";
 import { MerchantDynamicBreadcrumb } from "./MerchantDynamicBreadcrumb";
+import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
+
+const mapContainerStyle = {
+  width: "100%",
+  height: "300px",
+};
+
+const defaultCenter = {
+  lat: -8.510014814449596,
+  lng: 115.25923437673299,
+};
 
 export default function MerchantDetailPage() {
   const params = useParams<{ id: string }>();
   const id = params.id;
   const [merchant, setMerchant] = useState<MerchantWithProducts | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [images, setImages] = useState<string[]>();
+  const [mapCoordinates, setMapCoordinates] = useState(defaultCenter);
   const token = Cookies.get("userId");
+
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+  });
 
   const fetchMerchant = async () => {
     try {
@@ -57,6 +72,14 @@ export default function MerchantDetailPage() {
       );
       if (merchant) {
         setMerchant(merchant);
+        if (merchant?.latitude && merchant?.longitude) {
+          setMapCoordinates({
+            lat: parseFloat(merchant.latitude) || defaultCenter.lat,
+            lng: parseFloat(merchant.longitude) || defaultCenter.lng,
+          });
+        } else {
+          setMapCoordinates(defaultCenter); // fallback jika data tidak tersedia
+        }
       }
     } catch (error) {
       console.error("Error fetching merchant:", error);
@@ -163,6 +186,15 @@ export default function MerchantDetailPage() {
                 </DialogHeader>
               </DialogContent>
             </Dialog>
+            <div className="mt-4 rounded-md overflow-hidden">
+              <GoogleMap
+                mapContainerStyle={mapContainerStyle}
+                zoom={12}
+                center={mapCoordinates}
+              >
+                <Marker position={mapCoordinates} />
+              </GoogleMap>
+            </div>
           </div>
           <div className="col-span-3">
             <div className="gap-6 grid grid-cols-3">

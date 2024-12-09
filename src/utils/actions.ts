@@ -65,8 +65,6 @@ export async function getDataBySlug(
 
     const result = await response.json();
 
-    console.log("result", JSON.stringify(result, null, 2));
-
     if (result.success && result.data) {
       return result.data;
     } else {

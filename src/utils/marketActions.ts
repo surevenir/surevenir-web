@@ -83,8 +83,6 @@ export async function postMarket(
   },
   token: string
 ): Promise<any | null> {
-  console.log(data);
-
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:5000";
@@ -153,8 +151,6 @@ export async function editMarket(
   },
   token: string
 ): Promise<any | null> {
-  console.log(data);
-
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:5000";

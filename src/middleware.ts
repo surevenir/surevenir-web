@@ -4,22 +4,29 @@ import { getUserById } from "./utils/userActions";
 
 const PUBLIC_ROUTES = ["/", "/auth/login", "/auth/register"];
 
+/**
+ * This middleware handles authentication and authorization for the app.
+ * It checks if the user is logged in and has the correct role for the requested route.
+ * If the user is not logged in, it redirects to the login page.
+ * If the user is logged in but does not have the correct role, it redirects to the home page.
+ * If the user is logged in and has the correct role, it adds the user ID to the request headers.
+ * If the user is not logged in, it redirects to the login page.
+ * If the request is for a public route, it returns the response from Next.js.
+ * If the request is for a protected route and the user is not logged in, it redirects to the login page.
+ * If the request is for a protected route and the user is logged in, it validates the user's token.
+ * If the token is valid, it adds the user ID to the request headers and returns the response from Next.js.
+ * If the token is invalid, it redirects to the login page.
+ * If there is an error during token validation, it logs the error to the console and redirects to the login page.
+ */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
 
-  // Ambil token dari cookies
   const idToken = request.cookies.get("idToken")?.value;
   const userId = request.cookies.get("userId")?.value;
 
-  console.log("userId", userId);
-  console.log("idToken", idToken);
-
   const user = await getUserById(userId as string, userId as string);
 
-  console.log(JSON.stringify(user, null, 2));
-
-  // Jika pengguna sudah login, blok akses ke "/auth/login" dan "/auth/register"
   if (
     idToken &&
     (pathname === "/auth/login" || pathname === "/auth/register")
@@ -43,28 +50,15 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Izinkan akses ke public routes tanpa validasi
   if (PUBLIC_ROUTES.includes(pathname)) {
     return NextResponse.next();
   }
 
-  // Jika tidak ada token, arahkan pengguna ke "/auth/login"
   if (!idToken) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
-  // Validasi token dengan API
   try {
-    // const response = await fetch(
-    // `${request.nextUrl.origin}/api/validate-token`,
-    // const response = await fetch(`${apiUrl}/api/validate-token`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({ token: idToken }),
-    // });
-
     const response = await fetch(`${apiUrl}/api/validate-token`, {
       method: "POST",
       headers: {
@@ -73,7 +67,6 @@ export async function middleware(request: NextRequest) {
       body: JSON.stringify({ token: idToken }),
     });
 
-    // Jika token valid, lanjutkan request
     if (response.status === 200) {
       const decodedToken = await response.json();
 
@@ -85,7 +78,6 @@ export async function middleware(request: NextRequest) {
     console.error("Error during token validation:", error);
   }
 
-  // Jika validasi token gagal, arahkan ke "/auth/login"
   return NextResponse.redirect(new URL("/auth/login", request.url));
 }
 
@@ -96,5 +88,5 @@ export const config = {
     "/markets",
     "/merchants",
     "/products",
-  ], // Middleware berlaku untuk dashboard dan auth routes
+  ],
 };

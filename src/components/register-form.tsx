@@ -77,8 +77,6 @@ export function RegisterForm() {
 
       const result = await postUser(userData);
 
-      console.log("result: " + JSON.stringify(result));
-
       if (userCredential && result) {
         toast.success("User registered successfully!");
         router.push("/auth/login");

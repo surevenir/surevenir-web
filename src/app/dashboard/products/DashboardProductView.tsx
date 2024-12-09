@@ -281,7 +281,6 @@ export default function DashboardProductView({
     if (!selectedProduct) return;
 
     setLoading(true);
-    console.log("Editing product with data:", data);
     const categoryIds =
       typeof data.categoryIds === "string"
         ? data.categoryIds.split(",").map((id) => parseInt(id, 10))
@@ -296,8 +295,6 @@ export default function DashboardProductView({
         },
         userId as string
       );
-
-      console.log("result", result);
 
       if (result) {
         toast.success("Product updated successfully!");
@@ -339,8 +336,6 @@ export default function DashboardProductView({
     setLoading(true);
     try {
       const result = await deleteImage(url, userId as string);
-
-      console.log("result :", result);
 
       if (result) {
         toast("Successfully deleted image");
@@ -838,7 +833,6 @@ export default function DashboardProductView({
                       <Button
                         onClick={() => {
                           setSelectedProduct(product);
-                          console.log(JSON.stringify(product));
 
                           formEdit.reset({
                             name: product.name,

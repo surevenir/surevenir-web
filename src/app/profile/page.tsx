@@ -17,7 +17,7 @@ export default async function ProfilePage() {
   const checkoutData = await getCheckout(token as string);
 
   if (!cartData) {
-    console.log("Cart data not found or has incorrect format");
+    console.error("Cart data not found or has incorrect format");
     return (
       <div>
         <h1>No Cart Found</h1>
@@ -26,7 +26,7 @@ export default async function ProfilePage() {
   }
 
   if (!checkoutData) {
-    console.log("Checkout data not found or has incorrect format");
+    console.error("Checkout data not found or has incorrect format");
     return (
       <div>
         <h1>No Checkout Found</h1>

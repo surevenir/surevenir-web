@@ -48,8 +48,6 @@ export async function postMerchant(
   },
   token: string
 ): Promise<any | null> {
-  console.log(data);
-
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:5000";
@@ -127,8 +125,6 @@ export async function editMerchant(
   },
   token: string
 ): Promise<any | null> {
-  console.log(data);
-
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:5000";

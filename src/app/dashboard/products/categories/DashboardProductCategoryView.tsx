@@ -161,7 +161,6 @@ export default function DashboardProductCategoryView({
 
   const handleAddCategory = async (data: FormDataAdd) => {
     setLoading(true);
-    console.log("category", data);
 
     try {
       const result = await postCategory(data, token as string);
@@ -185,7 +184,6 @@ export default function DashboardProductCategoryView({
     if (!selectedCategory) return;
 
     setLoading(true);
-    console.log("Editing category with data:", data);
 
     // Validasi file gambar jika ada
     const file = data.image as File | null;

@@ -78,7 +78,6 @@ export default function DashboardProfileView({
 
   const handleEditUser = async (data: FormProfile) => {
     setLoading(true);
-    console.log("data", JSON.stringify(data, null, 2));
 
     try {
       const result = await updateUser(
@@ -86,8 +85,6 @@ export default function DashboardProfileView({
         token as string,
         file
       );
-
-      console.log("result", JSON.stringify(result, null, 2));
 
       if (result) {
         toast.success("Successfully updated user");
