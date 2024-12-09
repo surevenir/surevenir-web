@@ -217,6 +217,37 @@ export type Review = {
   updatedAt: string;
 };
 
+type PredictionData = {
+  accuration: number;
+  result: string;
+};
+
+type MerchantProductInPrediction = {
+  id: number;
+  name: string;
+  profile_image_url: string;
+};
+
+type ProductInPrediction = {
+  id: number;
+  slug: string;
+  name: string;
+  description: string;
+  price: number;
+  merchant_id: number;
+  stock: number;
+  createdAt: string;
+  updatedAt: string;
+  merchant: MerchantProductInPrediction;
+  images: string[] | null;
+};
+
+export type Predict = {
+  prediction: PredictionData;
+  category: Category;
+  related_products: ProductInPrediction[] | null;
+};
+
 export enum MediaType {
   MARKET = "market",
   MERCHANT = "merchant",

@@ -41,7 +41,7 @@ export default async function ProfilePage() {
 
   return (
     <>
-      <div className="px-8 md:px-16 lg:px-32 py-20 w-full">
+      <div className="px-8 md:px-16 lg:px-32 py-20 lg:py-8 w-full">
         <Tabs defaultValue="cart" className="">
           <div className="flex justify-center">
             <TabsList className="m-auto">
