@@ -35,11 +35,13 @@ export default async function ProfilePage() {
   }
 
   const cart: Cart = cartData;
-  const checkout: Checkout[] = checkoutData;
+  const checkout: Checkout[] = checkoutData.sort((a, b) => {
+    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+  });
 
   return (
     <>
-      <div className="px-32 py-8 w-full">
+      <div className="px-8 md:px-16 lg:px-32 py-20 w-full">
         <Tabs defaultValue="cart" className="">
           <div className="flex justify-center">
             <TabsList className="m-auto">
@@ -55,7 +57,7 @@ export default async function ProfilePage() {
             <CartView cart={cart} />
           </TabsContent>
           <TabsContent value="checkout">
-            <CheckoutView checkout={checkout} />
+            <CheckoutView checkouts={checkout} />
           </TabsContent>
         </Tabs>
       </div>

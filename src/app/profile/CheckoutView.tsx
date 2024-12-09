@@ -17,15 +17,20 @@ import {
 import { Checkout } from "../types/types";
 
 interface CheckoutViewProps {
-  checkout: Checkout[];
+  checkouts: Checkout[];
 }
 
-export default function CheckoutView({ checkout }: CheckoutViewProps) {
+export default function CheckoutView({ checkouts }: CheckoutViewProps) {
   return (
     <>
       <TypographyH3 className="py-4 text-center">Checkout</TypographyH3>
+      {!checkouts && (
+        <>
+          <TypographyH4>Checkout Not Found</TypographyH4>
+        </>
+      )}
       <div className="flex flex-col gap-4">
-        {checkout.map((checkout) => (
+        {checkouts.map((checkout) => (
           <CheckoutCart {...checkout} key={checkout.id} />
         ))}
       </div>
@@ -35,7 +40,7 @@ export default function CheckoutView({ checkout }: CheckoutViewProps) {
 
 function CheckoutCart(checkout: Checkout) {
   return (
-    <Card className="m-auto w-96">
+    <Card className="m-auto sm:w-full lg:w-96">
       <CardHeader>
         <CardDescription className="text-right">
           {new Date(checkout.updatedAt).toLocaleString("id-ID", {

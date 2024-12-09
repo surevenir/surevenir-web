@@ -152,9 +152,9 @@ export default function DashboardProfileView({
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(handleEditUser)}
-                className="flex gap-4"
+                className="flex lg:flex-row flex-col gap-4"
               >
-                <div className="space-y-4 py-4 w-1/2">
+                <div className="space-y-4 py-4 w-full lg:w-1/2">
                   <FormField
                     control={form.control}
                     name="full_name"
@@ -254,7 +254,7 @@ export default function DashboardProfileView({
                     />
                   </div>
                 </div>
-                <div className="space-y-4 py-4 w-1/2">
+                <div className="space-y-4 py-4 w-full lg:w-1/2">
                   <div className="border rounded w-full h-[300px]">
                     <GoogleMap
                       mapContainerStyle={mapContainerStyle}
@@ -265,7 +265,7 @@ export default function DashboardProfileView({
                       <Marker position={mapCoordinates} />
                     </GoogleMap>
                   </div>
-                  <Button type="submit">Submit</Button>
+                  <Button type="submit">Update Profile</Button>
                 </div>
               </form>
             </Form>
