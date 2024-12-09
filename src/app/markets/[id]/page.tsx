@@ -93,6 +93,11 @@ export default function MarketDetailPage() {
 
   return (
     <div className="px-8 md:px-16 lg:px-32 py-20 w-full">
+      {!market && !loading && (
+        <>
+          <TypographyH4>Market not found</TypographyH4>
+        </>
+      )}
       {loading && (
         <div className="gap-8 grid grid-cols-1 lg:grid-cols-5">
           <div className="top-24 lg:sticky lg:col-span-2 w-full h-fit">

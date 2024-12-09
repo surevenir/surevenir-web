@@ -99,6 +99,11 @@ export default function MerchantDetailPage() {
 
   return (
     <div className="px-8 md:px-16 lg:px-32 py-20 w-full">
+      {!merchant && !loading && (
+        <>
+          <TypographyH4>Merchant not found</TypographyH4>
+        </>
+      )}
       {loading && (
         <div className="gap-8 grid grid-cols-1 lg:grid-cols-5">
           <div className="top-24 lg:sticky lg:col-span-2 w-full h-fit">
@@ -174,7 +179,7 @@ export default function MerchantDetailPage() {
                             <div className="p-1">
                               <img
                                 src={image.url}
-                                alt="merchant Image"
+                                alt="Merchant Image"
                                 className="w-full"
                               />
                             </div>

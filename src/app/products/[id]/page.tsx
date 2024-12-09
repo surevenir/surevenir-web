@@ -165,15 +165,15 @@ export default function ProductDetailPage() {
 
   return (
     <>
-      <div className="lg:px-32 py-12 w-full">
+      <div className="px-8 md:px-16 lg:px-32 py-20 w-full">
         {!product && !loading && (
           <>
             <TypographyH4>Product not found</TypographyH4>
           </>
         )}
         {loading && (
-          <div className="gap-8 grid grid-cols-7">
-            <div className="top-24 sticky col-span-2 h-fit">
+          <div className="gap-8 grid grid-cols-1 lg:grid-cols-7">
+            <div className="lg:top-24 lg:sticky lg:col-span-2 h-fit">
               <Skeleton className="rounded-md w-full h-64" />
 
               <div className="justify-start items-center gap-4 grid grid-cols-3 mt-4">
@@ -182,7 +182,7 @@ export default function ProductDetailPage() {
                 <Skeleton className="rounded-md w-full h-24" />
               </div>
             </div>
-            <div className="col-span-3">
+            <div className="lg:col-span-3">
               <Skeleton className="rounded-md w-32 h-8" />
               <Skeleton className="mt-4 rounded-md w-full h-6" />
               <Skeleton className="mt-2 rounded-md w-full h-6" />
@@ -191,14 +191,14 @@ export default function ProductDetailPage() {
               <Skeleton className="mt-2 rounded-md w-full h-6" />
               <Skeleton className="mt-2 rounded-md w-64 h-6" />
             </div>
-            <div className="col-span-2">
+            <div className="lg:col-span-2">
               <Skeleton className="w-full h-40" />
             </div>
           </div>
         )}
         {!loading && product && (
           <div className="gap-6 grid grid-cols-1 lg:grid-cols-7">
-            <div className="top-24 sticky col-span-2 h-fit">
+            <div className="lg:top-24 lg:sticky lg:col-span-2 lg:h-fit">
               <div className="pb-4">
                 <ProductDynamicBreadcrumb product={product as Product} />
               </div>
@@ -256,7 +256,7 @@ export default function ProductDetailPage() {
                 </DialogContent>
               </Dialog>
             </div>
-            <div className="col-span-3">
+            <div className="lg:col-span-3">
               <div className="">
                 <div className="flex flex-col gap-4 pb-4">
                   <TypographyH4 className="font-bold">
@@ -310,7 +310,7 @@ export default function ProductDetailPage() {
                 <ReviewCard />
               </div>
             </div>
-            <div className="top-24 sticky col-span-2 h-fit">
+            <div className="lg:top-24 lg:sticky lg:col-span-2 lg:h-fit">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
