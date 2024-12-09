@@ -44,6 +44,7 @@ import {
 import { HeartFilledIcon, StarFilledIcon } from "@radix-ui/react-icons";
 import { toast } from "sonner";
 import { addProductToCart } from "@/utils/cartActions";
+import Link from "next/link";
 
 export default function ProductDetailPage() {
   const params = useParams<{ id: string }>();
@@ -164,7 +165,7 @@ export default function ProductDetailPage() {
 
   return (
     <>
-      <div className="px-32 py-12 w-full">
+      <div className="lg:px-32 py-12 w-full">
         {!product && !loading && (
           <>
             <TypographyH4>Product not found</TypographyH4>
@@ -196,7 +197,7 @@ export default function ProductDetailPage() {
           </div>
         )}
         {!loading && product && (
-          <div className="gap-6 grid grid-cols-7">
+          <div className="gap-6 grid grid-cols-1 lg:grid-cols-7">
             <div className="top-24 sticky col-span-2 h-fit">
               <div className="pb-4">
                 <ProductDynamicBreadcrumb product={product as Product} />
@@ -256,19 +257,34 @@ export default function ProductDetailPage() {
               </Dialog>
             </div>
             <div className="col-span-3">
-              <div className="flex flex-col gap-4 pb-4">
-                <TypographyH4 className="font-bold">
-                  {product.name}
-                </TypographyH4>
-                <div className="flex items-center gap-2">
-                  <Star width={15} height={15} />{" "}
-                  <TypographySmall>4.5</TypographySmall>
+              <div className="">
+                <div className="flex flex-col gap-4 pb-4">
+                  <TypographyH4 className="font-bold">
+                    {product.name}
+                  </TypographyH4>
+                  <div className="flex items-center gap-2">
+                    <Star width={15} height={15} />{" "}
+                    <TypographySmall>4.5</TypographySmall>
+                  </div>
                 </div>
+                <TypographySmall>{product.description}</TypographySmall>
               </div>
-              <TypographySmall>{product.description}</TypographySmall>
+              <div className="py-8">
+                <TypographyH4>Available At :</TypographyH4>
+                <Link href={"/merchants/" + product.merchant.slug}>
+                  <div className="flex items-center gap-2 py-4">
+                    <img
+                      src={product.merchant.profile_image_url}
+                      alt={product.merchant.name}
+                      className="rounded-full w-8 h-8 object-cover"
+                    />
+                    <p>{product.merchant.name}</p>
+                  </div>
+                </Link>
+              </div>
               {product.reviews != null && product.reviews.length > 0 && (
                 <>
-                  <TypographyH4 className="pt-8 pb-4">Reviews</TypographyH4>
+                  <TypographyH4 className="pb-4">Reviews</TypographyH4>
                   <div className="gap-4 grid grid-cols-3">
                     {product.reviews.map((review) => (
                       <div className="">
@@ -285,7 +301,7 @@ export default function ProductDetailPage() {
                 </>
               )}
               <div>
-                <TypographyH4 className="pt-8 pb-4">Reviews</TypographyH4>
+                <TypographyH4 className="pb-4">Reviews</TypographyH4>
                 <ReviewCard />
                 <ReviewCard />
                 <ReviewCard />

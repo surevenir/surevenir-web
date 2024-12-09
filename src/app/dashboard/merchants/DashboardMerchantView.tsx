@@ -1189,7 +1189,7 @@ export default function DashboardMerchantView({
 
                           <DialogFooter>
                             <Button type="submit" disabled={loading}>
-                              {loading ? "Updating..." : "Update Market"}
+                              {loading ? "Updating..." : "Update Merchant"}
                             </Button>
                           </DialogFooter>
                         </form>

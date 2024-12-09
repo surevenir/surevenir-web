@@ -127,6 +127,14 @@ export type Product = {
   images: Image[] | null;
 };
 
+type MerchantInProductDetail = {
+  id: number;
+  name: string;
+  slug: string;
+  profile_image_url: string;
+  market: MarketInMerchant;
+};
+
 export type ProductDetail = {
   id: number;
   slug: string | null;
@@ -138,7 +146,7 @@ export type ProductDetail = {
   is_favorite: boolean;
   createdAt: string;
   updatedAt: string;
-  merchant: MerchantInProduct;
+  merchant: MerchantInProductDetail;
   product_categories: ProductCategoryInProduct[] | null;
   images: Image[] | null;
   reviews: Review[] | null;

@@ -12,7 +12,7 @@ export default async function MarketPage() {
 
   return (
     <>
-      <div className="px-32 py-16 w-full">
+      <div className="px-4 md:px-8 lg:px-32 py-16 w-full">
         <TypographyH4 className="pb-8">Merchant List</TypographyH4>
         <MerchantView merchants={merchants} />
       </div>
