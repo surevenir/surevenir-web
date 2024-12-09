@@ -136,8 +136,8 @@ export default function PredictView() {
         <TypographyH3 className="py-8 text-center">
           Predict Souvenir
         </TypographyH3>
-        <div className="flex gap-4">
-          <div className="w-1/3">
+        <div className="flex lg:flex-row flex-col gap-4">
+          <div className="w-full lg:w-1/3">
             <form
               id="predictForm"
               className="flex flex-col gap-4"
@@ -187,7 +187,7 @@ export default function PredictView() {
               </div>
             </form>
           </div>
-          <div className="w-2/3">
+          <div className="w-full lg:w-2/3">
             {newRequest && !result && (
               <>
                 <img
@@ -247,7 +247,7 @@ export default function PredictView() {
                     </TableBody>
                   </Table>
                   <TypographyH4>Related Products</TypographyH4>
-                  <div className="gap-4 grid grid-cols-3">
+                  <div className="gap-4 grid grid-cols-2 md:grid-cols-3">
                     {result.related_products &&
                       result.related_products.map((product) => (
                         <div key={product.id}>
