@@ -33,7 +33,7 @@ export default function MarketView({
               <img
                 src={market.profile_image_url}
                 alt="Gambar"
-                className="w-full h-48 object-cover"
+                className="w-full h-24 md:h-32 lg:h-48 object-cover"
               />
             )}
             {market.profile_image_url == null && (

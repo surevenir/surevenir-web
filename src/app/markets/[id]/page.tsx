@@ -33,13 +33,29 @@ import { Button } from "@/components/ui/button";
 import { MarketDynamicBreadcrumb } from "./MarketDynamicBreadcrumb";
 import Link from "next/link";
 import ShinyButton from "@/components/ui/shiny-button";
+import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
+
+const mapContainerStyle = {
+  width: "100%",
+  height: "300px",
+};
+
+const defaultCenter = {
+  lat: -8.510014814449596,
+  lng: 115.25923437673299,
+};
 
 export default function MarketDetailPage() {
   const params = useParams<{ id: string }>();
   const id = params.id;
   const [market, setMarket] = useState<MarketWithMerchants | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [mapCoordinates, setMapCoordinates] = useState(defaultCenter);
   const token = Cookies.get("userId");
+
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+  });
 
   const fetchMarket = async () => {
     try {
@@ -51,6 +67,14 @@ export default function MarketDetailPage() {
       );
       if (market) {
         setMarket(market);
+        if (market?.latitude && market?.longitude) {
+          setMapCoordinates({
+            lat: parseFloat(market.latitude) || defaultCenter.lat,
+            lng: parseFloat(market.longitude) || defaultCenter.lng,
+          });
+        } else {
+          setMapCoordinates(defaultCenter); // fallback jika data tidak tersedia
+        }
       }
     } catch (error) {
       console.error("Error fetching market:", error);
@@ -68,10 +92,10 @@ export default function MarketDetailPage() {
   }, [id, token]);
 
   return (
-    <div className="px-32 py-12 w-full">
+    <div className="px-8 md:px-16 lg:px-32 py-20 w-full">
       {loading && (
-        <div className="gap-8 grid grid-cols-5">
-          <div className="top-24 sticky col-span-2 h-fit">
+        <div className="gap-8 grid grid-cols-1 lg:grid-cols-5">
+          <div className="top-24 lg:sticky lg:col-span-2 w-full h-fit">
             <Skeleton className="rounded-md w-full h-64" />
 
             <div className="justify-start items-center gap-4 grid grid-cols-3 mt-4">
@@ -80,9 +104,9 @@ export default function MarketDetailPage() {
               <Skeleton className="rounded-md w-full h-24" />
             </div>
           </div>
-          <div className="col-span-3">
-            <div className="grid grid-cols-3">
-              <div className="col-span-2 pr-4">
+          <div className="lg:col-span-3">
+            <div className="grid grid-cols-1 lg:grid-cols-3">
+              <div className="lg:col-span-2 pr-4">
                 <Skeleton className="rounded-md w-32 h-8" />
                 <Skeleton className="mt-4 rounded-md w-full h-6" />
                 <Skeleton className="mt-2 rounded-md w-full h-6" />
@@ -91,7 +115,7 @@ export default function MarketDetailPage() {
                 <Skeleton className="mt-2 rounded-md w-full h-6" />
                 <Skeleton className="mt-2 rounded-md w-64 h-6" />
               </div>
-              <div className="col-span-1">
+              <div className="lg:col-span-1 mt-8 lg:mt-0">
                 <Skeleton className="w-full h-40" />
               </div>
             </div>
@@ -99,8 +123,8 @@ export default function MarketDetailPage() {
         </div>
       )}
       {!loading && market && (
-        <div className="gap-6 grid grid-cols-5">
-          <div className="top-24 sticky col-span-2 h-fit">
+        <div className="gap-6 grid sm:grid-cols-1 lg:grid-cols-5">
+          <div className="lg:top-24 lg:sticky lg:col-span-2 sm:pb-8 lg:h-fit">
             <div className="pb-4">
               <MarketDynamicBreadcrumb market={market as Market} />
             </div>
@@ -126,7 +150,7 @@ export default function MarketDetailPage() {
                       <img
                         src={image.url}
                         alt="Gambar Pasar"
-                        className="rounded-md w-full h-24 overflow-hidden aspect-auto object-cover"
+                        className="rounded-md w-full h-24 md:h-36 overflow-hidden aspect-auto object-cover"
                       />
                     </DialogTrigger>
                   ))}
@@ -157,11 +181,20 @@ export default function MarketDetailPage() {
                 </DialogHeader>
               </DialogContent>
             </Dialog>
+            <div className="mt-4 rounded-md overflow-hidden">
+              <GoogleMap
+                mapContainerStyle={mapContainerStyle}
+                zoom={12}
+                center={mapCoordinates}
+              >
+                <Marker position={mapCoordinates} />
+              </GoogleMap>
+            </div>
           </div>
-          <div className="col-span-3">
-            <div className="gap-6 grid grid-cols-3">
-              <div className="col-span-2">
-                <div className="flex justify-between items-center pb-2">
+          <div className="lg:col-span-3 sm:py-4">
+            <div className="lg:gap-6 grid sm:grid-cols-1 lg:grid-cols-3">
+              <div className="lg:col-span-2 py-8 lg:py-0">
+                <div className="flex justify-between items-center sm:py-8">
                   <TypographyH4>{market.name}</TypographyH4>
                   <div className="flex items-center gap-2">
                     <Star width={15} height={15} />{" "}
@@ -170,7 +203,7 @@ export default function MarketDetailPage() {
                 </div>
                 <TypographySmall>{market.description}</TypographySmall>
               </div>
-              <div className="col-span-1">
+              <div className="lg:col-span-1 sm:mt-8">
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -191,14 +224,14 @@ export default function MarketDetailPage() {
                 <TypographyH4 className="pt-8 pb-4">
                   Merchant in {market.name}
                 </TypographyH4>
-                <div className="gap-4 grid grid-cols-3">
+                <div className="gap-4 grid grid-cols-2 lg:grid-cols-3">
                   {market.merchants.map((merchant) => (
                     <Card className="overflow-hidden" key={merchant.id}>
                       {merchant.profile_image_url && (
                         <img
                           src={merchant.profile_image_url}
                           alt="Gambar"
-                          className="w-full h-36 object-cover"
+                          className="w-full h-36 md:h-44 object-cover"
                         />
                       )}
                       {merchant.profile_image_url == null && (

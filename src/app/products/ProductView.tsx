@@ -26,7 +26,7 @@ export default function ProductView({
   const [products, setProducts] = useState<Product[]>(initialProducts);
   return (
     <>
-      <div className="gap-4 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+      <div className="gap-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
         {products.map((product) => (
           <Card className="overflow-hidden" key={product.id}>
             {product.images && product.images.length > 0 && (
