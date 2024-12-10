@@ -3,7 +3,7 @@
 import { getDataBySlug } from "@/utils/actions";
 import { useParams } from "next/navigation";
 import Cookies from "js-cookie";
-import { Product, ProductDetail } from "@/app/types/types";
+import { Product, ProductDetail, Review } from "@/app/types/types";
 import { useEffect, useState } from "react";
 import {
   Dialog,
@@ -45,6 +45,7 @@ import { HeartFilledIcon, StarFilledIcon } from "@radix-ui/react-icons";
 import { toast } from "sonner";
 import { addProductToCart } from "@/utils/cartActions";
 import Link from "next/link";
+import { formatDistanceToNow } from "date-fns";
 
 export default function ProductDetailPage() {
   const params = useParams<{ id: string }>();
@@ -83,6 +84,7 @@ export default function ProductDetailPage() {
         setProduct(product);
         setPrice(product.price);
         setisFavorite(product.is_favorite);
+        console.log(JSON.stringify(product, null, 2));
       }
     } catch (error) {
       console.error("Error fetching product:", error);
@@ -256,7 +258,7 @@ export default function ProductDetailPage() {
                 </DialogContent>
               </Dialog>
             </div>
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-3 pt-4">
               <div className="">
                 <div className="flex flex-col gap-4 pb-4">
                   <TypographyH4 className="font-bold">
@@ -283,32 +285,13 @@ export default function ProductDetailPage() {
                 </Link>
               </div>
               {product.reviews != null && product.reviews.length > 0 && (
-                <>
+                <div>
                   <TypographyH4 className="pb-4">Reviews</TypographyH4>
-                  <div className="gap-4 grid grid-cols-3">
-                    {product.reviews.map((review) => (
-                      <div className="">
-                        <div className="">
-                          <Star />
-                          <Star />
-                          <Star />
-                          <Star />
-                          <Star />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </>
+                  {product.reviews.map((review) => (
+                    <ReviewCard review={review} />
+                  ))}
+                </div>
               )}
-              <div>
-                <TypographyH4 className="pb-4">Reviews</TypographyH4>
-                <ReviewCard />
-                <ReviewCard />
-                <ReviewCard />
-                <ReviewCard />
-                <ReviewCard />
-                <ReviewCard />
-              </div>
             </div>
             <div className="lg:top-24 lg:sticky lg:col-span-2 lg:h-fit">
               <Card>
@@ -393,59 +376,39 @@ export default function ProductDetailPage() {
   );
 }
 
-function ReviewCard() {
+function ReviewCard({ review }: { review: Review }) {
   return (
     <>
       <div className="flex items-center gap-4 pt-4">
         <div className="flex items-center gap-1">
-          <StarFilledIcon className="w-4" />
-          <StarFilledIcon className="w-4" />
-          <StarFilledIcon className="w-4" />
-          <StarFilledIcon className="w-4" />
-          <StarFilledIcon className="w-4" />
+          {Array.from({ length: review.rating }, (_, index) => (
+            <StarFilledIcon key={index} className="w-4" />
+          ))}
         </div>
-        <TypographyMuted>1 Month ago</TypographyMuted>
+
+        <TypographyMuted>
+          {formatDistanceToNow(new Date(review.updatedAt), { addSuffix: true })}
+        </TypographyMuted>
       </div>
       <div className="flex items-center gap-2 py-4">
         <img
-          src="/logo.png"
+          src={`${review.user.profile_image_url || "/logo.png"}`}
           alt=""
           className="rounded-full w-8 h-8 object-cover"
         />
-        <p>Nama User</p>
+        <p>{review.user.full_name}</p>
       </div>
-      <p>Good product</p>
+      <p>{review.comment}</p>
       <div className="gap-2 grid grid-cols-4 py-4">
-        <img
-          src="/logo.png"
-          alt=""
-          className="rounded-md w-full h-24 object-cover"
-        />
-        <img
-          src="/logo.png"
-          alt=""
-          className="rounded-md w-full h-24 object-cover"
-        />
-        <img
-          src="/logo.png"
-          alt=""
-          className="rounded-md w-full h-24 object-cover"
-        />
-        <img
-          src="/logo.png"
-          alt=""
-          className="rounded-md w-full h-24 object-cover"
-        />
-        <img
-          src="/logo.png"
-          alt=""
-          className="rounded-md w-full h-24 object-cover"
-        />
-        <img
-          src="/logo.png"
-          alt=""
-          className="rounded-md w-full h-24 object-cover"
-        />
+        {review.images.map((image, index) => (
+          <div key={index}>
+            <img
+              src={image}
+              alt=""
+              className="rounded-md w-full h-24 object-cover"
+            />
+          </div>
+        ))}
       </div>
     </>
   );

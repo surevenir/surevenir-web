@@ -36,7 +36,7 @@ const data = {
     email: "m@example.com",
     avatar: "/logo.png",
   },
-  navMain: [
+  navMainAdmin: [
     {
       title: "Dashboard",
       url: "/dashboard",
@@ -112,6 +112,56 @@ const data = {
       ],
     },
   ],
+  navMainMerchant: [
+    {
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: LayoutDashboardIcon,
+      items: [
+        {
+          title: "Dashboard",
+          url: "/dashboard",
+        },
+      ],
+    },
+    {
+      title: "Merchants",
+      url: "/dashboard/merchants",
+      icon: HousePlugIcon,
+      items: [
+        {
+          title: "Merchant Details",
+          url: "/dashboard/merchants",
+        },
+      ],
+    },
+    {
+      title: "Products",
+      url: "/dashboard/products",
+      icon: ShoppingBasketIcon,
+      items: [
+        {
+          title: "Product Details",
+          url: "/dashboard/products",
+        },
+        {
+          title: "Product Reviews",
+          url: "/dashboard/products/reviews",
+        },
+      ],
+    },
+    {
+      title: "Settings",
+      url: "/dashboard/profile",
+      icon: Settings2,
+      items: [
+        {
+          title: "Profile",
+          url: "/dashboard/profile",
+        },
+      ],
+    },
+  ],
   projects: [
     {
       name: "Design Engineering",
@@ -138,6 +188,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const fetchUser = async () => {
     const user: any = (await getUserById(userId, userId as string)) || [];
     setUser(user);
+    console.log("user dashboard", user);
   };
 
   React.useEffect(() => {
@@ -149,9 +200,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <Profile profile={data.profile} />
       </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-      </SidebarContent>
+      {user?.role == "ADMIN" && (
+        <SidebarContent>
+          <NavMain items={data.navMainAdmin} />
+        </SidebarContent>
+      )}
+      {user?.role == "MERCHANT" && (
+        <SidebarContent>
+          <NavMain items={data.navMainMerchant} />
+        </SidebarContent>
+      )}
       <SidebarFooter>
         <NavUser user={user} />
       </SidebarFooter>

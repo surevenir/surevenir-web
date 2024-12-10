@@ -45,8 +45,20 @@ export async function middleware(request: NextRequest) {
   }
 
   if (user) {
-    if (user.role !== "ADMIN" && pathname.includes("/dashboard")) {
+    if (
+      user.role !== "ADMIN" &&
+      user.role !== "MERCHANT" &&
+      pathname.includes("/dashboard")
+    ) {
       return NextResponse.redirect(new URL("/", request.url));
+    }
+
+    if (
+      user.role !== "ADMIN" &&
+      pathname.includes("/dashboard/markets") &&
+      pathname.includes("/dashboard/products/categories")
+    ) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }
 
@@ -88,5 +100,7 @@ export const config = {
     "/markets",
     "/merchants",
     "/products",
+    "/predict",
+    "/profile",
   ],
 };

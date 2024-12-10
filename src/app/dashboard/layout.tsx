@@ -9,12 +9,22 @@ import {
 import { Metadata } from "next";
 import { ReactNode } from "react";
 import { DashboardDynamicBreadcrumb } from "./DashboardDynamicBreadcrumb";
+import { cookies } from "next/headers";
+import { getUserById } from "@/utils/userActions";
 
 export const metadata: Metadata = {
   title: "Surevenir | Dashboard",
 };
 
-export default function DashboardLayout({ children }: { children: ReactNode }) {
+export default async function DashboardLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("userId")?.value;
+  const user = (await getUserById(token as string, token as string)) || {};
+
   return (
     <SidebarProvider>
       <AppSidebar />

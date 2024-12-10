@@ -47,7 +47,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Market, MediaType, Merchant } from "@/app/types/types";
+import { Market, MediaType, Merchant, User } from "@/app/types/types";
 import { deleteImage, postImages } from "@/utils/imageActions";
 import Cookies from "js-cookie";
 import {
@@ -82,6 +82,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { getUserById } from "@/utils/userActions";
 
 interface MerchantViewProps {
   merchants: Merchant[] | [];
@@ -106,7 +107,6 @@ export default function DashboardMerchantView({
   const [hasMarket, setHasMarket] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [nameSortOrder, setNameSortOrder] = useState("asc");
-
   const userId = Cookies.get("userId") || "";
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",

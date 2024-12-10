@@ -197,7 +197,7 @@ export type Checkout = {
 export type CheckoutDetail = {
   id: number;
   checkout_id: number;
-  product_id: number | null;
+  product_id: number;
   product_identity: string;
   product_quantity: number;
   product_price: number;
@@ -215,6 +215,8 @@ export type Review = {
   product_id: number;
   createdAt: string;
   updatedAt: string;
+  user: User;
+  images: string[];
 };
 
 type PredictionData = {

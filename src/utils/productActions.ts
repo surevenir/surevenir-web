@@ -1,6 +1,9 @@
 "use server";
 
-export async function getProducts(token: string): Promise<any[] | null> {
+export async function getProducts(
+  token: string,
+  byOwner: boolean = false
+): Promise<any[] | null> {
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
@@ -9,7 +12,9 @@ export async function getProducts(token: string): Promise<any[] | null> {
       throw new Error("Authorization token is missing.");
     }
 
-    const response = await fetch(`${host}/api/products`, {
+    const url = byOwner ? "/api/products/by/owner" : "/api/products";
+
+    const response = await fetch(`${host + url}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
