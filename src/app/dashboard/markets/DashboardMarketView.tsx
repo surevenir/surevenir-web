@@ -172,7 +172,7 @@ export default function DashboardMarketView({
         form.reset();
         await fetchMarkets();
       } else {
-        toast("Failed to add market");
+        toast.error("Failed to add market");
       }
     } catch (error: any) {
       console.error("Error adding market:", error.message);
@@ -342,15 +342,15 @@ export default function DashboardMarketView({
     try {
       const result = await deleteMarket(selectedMarket.id, token as string);
       if (result) {
-        toast("Successfully deleted market");
+        toast.success("Successfully deleted market");
         setSelectedMarket(null);
         await fetchMarkets();
       } else {
-        toast("Failed to delete market");
+        toast.error("Failed to delete market");
       }
     } catch (error: any) {
       console.error("Error deleting market:", error.message);
-      toast("An error occurred while deleting the market");
+      toast.error("An error occurred while deleting the market");
     } finally {
       setLoading(false);
     }
@@ -369,14 +369,14 @@ export default function DashboardMarketView({
       const result = await deleteImage(url, token as string);
 
       if (result) {
-        toast("Successfully deleted image");
+        toast.success("Successfully deleted image");
         await fetchMarkets();
       } else {
-        toast("Failed to delete image");
+        toast.error("Failed to delete image");
       }
     } catch (error: any) {
       console.error("Error deleting image:", error.message);
-      toast("An error occurred while deleting the image");
+      toast.error("An error occurred while deleting the image");
     } finally {
       setLoading(false);
     }
@@ -402,7 +402,7 @@ export default function DashboardMarketView({
   }, [searchQuery, markets]);
 
   return (
-    <div className="px-8">
+    <div className="px-8 pb-8">
       <div className="flex justify-between mb-4">
         <div className="flex items-center gap-4">
           <h3 className="font-semibold text-xl">Market List</h3>

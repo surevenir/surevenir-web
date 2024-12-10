@@ -3,7 +3,6 @@
 import { cookies } from "next/headers";
 import MarketView from "./MarketView";
 import { getMarkets } from "@/utils/marketActions";
-import { TypographyH4 } from "@/components/ui/typography";
 
 export default async function MarketPage() {
   const cookieStore = await cookies();
@@ -12,8 +11,7 @@ export default async function MarketPage() {
 
   return (
     <>
-      <div className="px-4 md:px-16 lg:px-32 py-16 w-full">
-        <TypographyH4 className="pb-8">Market List</TypographyH4>
+      <div className="px-4 md:px-16 lg:px-32 py-16 lg:py-32 w-full">
         <MarketView markets={markets} />
       </div>
     </>

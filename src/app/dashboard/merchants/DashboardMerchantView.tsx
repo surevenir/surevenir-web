@@ -249,7 +249,7 @@ export default function DashboardMerchantView({
         form.reset();
         await fetchMerchants();
       } else {
-        toast("Failed to add merchant");
+        toast.error("Failed to add merchant");
       }
     } catch (error: any) {
       console.error("Error adding merchant:", error.message);
@@ -442,15 +442,15 @@ export default function DashboardMerchantView({
         userId as string
       );
       if (result) {
-        toast("Successfully deleted merchant");
+        toast.success("Successfully deleted merchant");
         setSelectedMerchant(null);
         await fetchMerchants();
       } else {
-        toast("Failed to delete merchant");
+        toast.error("Failed to delete merchant");
       }
     } catch (error: any) {
       console.error("Error deleting merchant:", error.message);
-      toast("An error occurred while deleting the merchant");
+      toast.error("An error occurred while deleting the merchant");
     } finally {
       setLoading(false);
     }
@@ -469,14 +469,14 @@ export default function DashboardMerchantView({
       const result = await deleteImage(url, userId as string);
 
       if (result) {
-        toast("Successfully deleted image");
+        toast.success("Successfully deleted image");
         await fetchMerchants();
       } else {
-        toast("Failed to delete image");
+        toast.error("Failed to delete image");
       }
     } catch (error: any) {
       console.error("Error deleting image:", error.message);
-      toast("An error occurred while deleting the image");
+      toast.error("An error occurred while deleting the image");
     } finally {
       setLoading(false);
     }

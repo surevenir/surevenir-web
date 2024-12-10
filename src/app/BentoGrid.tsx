@@ -153,7 +153,7 @@ const productData: MarqueeData[] = [
     name: "White Dream Catcher",
     description:
       "The White Dream Catcher is a stunning and serene decor piece that symbolizes peace, purity, and positive energy. Handcrafted with care, it features a delicate web at its center, believed to filter dreams, letting only the positive ones pass through while trapping bad dreams. Perfect for bedrooms, nurseries, or any relaxing space, this dream catcher blends traditional craftsmanship with modern minimalist style.",
-    imgUrl: "/product-image/1.png",
+    imgUrl: "/product-image/1.jpg",
   },
   {
     name: "Omkara Wall Decoration",

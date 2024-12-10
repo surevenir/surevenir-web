@@ -73,7 +73,7 @@ export default function MarketDetailPage() {
             lng: parseFloat(market.longitude) || defaultCenter.lng,
           });
         } else {
-          setMapCoordinates(defaultCenter); // fallback jika data tidak tersedia
+          setMapCoordinates(defaultCenter);
         }
       }
     } catch (error) {

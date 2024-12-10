@@ -107,7 +107,7 @@ export default function ProductDetailPage() {
       }
     } catch (error: any) {
       console.error("Error add favorite:", error.message);
-      toast("An error occurred while adding category");
+      toast.error("An error occurred while adding category");
     } finally {
       setLoadingCategory(false);
     }
@@ -129,7 +129,7 @@ export default function ProductDetailPage() {
       }
     } catch (error: any) {
       console.error("Error add to cart:", error.message);
-      toast("An error occurred while adding to cart");
+      toast.error("An error occurred while adding to cart");
     } finally {
       setLoadingCart(false);
     }
@@ -151,7 +151,7 @@ export default function ProductDetailPage() {
       }
     } catch (error: any) {
       console.error("Error delete favorite:", error.message);
-      toast("An error occurred while deleting the category");
+      toast.error("An error occurred while deleting the category");
     } finally {
       setLoadingCategory(false);
     }

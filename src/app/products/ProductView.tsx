@@ -9,12 +9,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import ShinyButton from "@/components/ui/shiny-button";
-import { TypographySmall } from "@/components/ui/typography";
+import { TypographyH4, TypographySmall } from "@/components/ui/typography";
 import { Star } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Product } from "../types/types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import { useSearchParams } from "next/navigation";
 
 interface ProductViewProps {
   products: Product[];
@@ -23,11 +25,53 @@ interface ProductViewProps {
 export default function ProductView({
   products: initialProducts,
 }: ProductViewProps) {
+  const searchParams = useSearchParams();
+
+  // Ambil nilai parameter "query"
+  const query = searchParams.get("query");
   const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    if (query) {
+      setSearchQuery(query);
+    }
+  }, [query]);
+
+  const handleSearchChange = (e: any) => {
+    setSearchQuery(e.target.value);
+  };
+
+  useEffect(() => {
+    let result = products.filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    setFilteredProducts(result);
+  }, [searchQuery]);
   return (
     <>
+      <div className="flex flex-wrap justify-between items-center pb-8">
+        <TypographyH4>Product List</TypographyH4>
+        <div className="flex justify-between items-center gap-4">
+          <Input
+            type="text"
+            placeholder="Search for..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="w-fit"
+          />
+          <TypographySmall>
+            Products found ({filteredProducts.length} / {products.length})
+          </TypographySmall>
+        </div>
+      </div>
+
       <div className="gap-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-        {products.map((product) => (
+        {filteredProducts.map((product) => (
           <Card className="overflow-hidden" key={product.id}>
             {product.images && product.images.length > 0 && (
               <img

@@ -248,6 +248,20 @@ export type Predict = {
   related_products: ProductInPrediction[] | null;
 };
 
+export type Histories = {
+  id: number;
+  slug: string;
+  predict: string;
+  accuration: number;
+  image_url: string;
+  createdAt: string;
+  updatedAt: string;
+  user_id: string;
+  category_name: string;
+  category_description: string;
+  category_range_price: string;
+};
+
 export enum MediaType {
   MARKET = "market",
   MERCHANT = "merchant",

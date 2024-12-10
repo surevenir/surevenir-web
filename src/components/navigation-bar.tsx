@@ -154,7 +154,7 @@ export default function NavigationBar() {
         </Sheet>
       </div>
 
-      <div className="top-0 z-50 sticky lg:flex justify-between items-center hidden bg-white/5 shadow-md backdrop-blur-md px-8 md:px-16 lg:px-32 py-4">
+      <div className="top-0 right-0 left-0 z-50 fixed lg:flex justify-between items-center hidden bg-white/5 shadow-md backdrop-blur-md px-8 md:px-16 lg:px-32 py-4 w-full">
         <Link href={"/"} className="flex items-center gap-2">
           <Image
             src="/logo.png"

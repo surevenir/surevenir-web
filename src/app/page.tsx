@@ -27,6 +27,7 @@ import { MarqueeReview } from "./MarqueeReview";
 export default function HomePage() {
   const { resolvedTheme } = useTheme();
   const [color, setColor] = useState("#ffffff");
+  const host: string = process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
 
   useEffect(() => {
     setColor(resolvedTheme === "dark" ? "#ffffff" : "#000000");
@@ -51,8 +52,22 @@ export default function HomePage() {
     loadDialogflow();
   }, []);
 
+  useEffect(() => {
+    const eventSource = new EventSource(`${host}/events`);
+
+    eventSource.onmessage = (event) => {
+      console.log("New topic received:", event.data);
+      alert("Masuk bos");
+      // Handle the new topic data
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, []);
+
   return (
-    <div className="overflow-x-hidden">
+    <div className="lg:py-16 overflow-x-hidden">
       <NavigationBar />
       <div className="px-8 md:px-16 lg:px-32 w-full">
         <div className="flex flex-col justify-center py-16 w-full">
@@ -89,7 +104,7 @@ export default function HomePage() {
             />
             <BorderBeam duration={12} delay={9} />
           </div>
-          <div className="dark:block relative hidden mt-32">
+          <div className="dark:block relative hidden">
             <HeroVideoDialog
               className=""
               animationStyle="from-center"
@@ -100,7 +115,12 @@ export default function HomePage() {
             <BorderBeam duration={12} delay={9} />
           </div>
 
-          <TextRevealByWord text="SureVenir can help you to find the best souvenirs." />
+          <div className="top-0 sticky h-[100vh] overflow-clip">
+            <TextRevealByWord
+              text="SureVenir can help you to find the best souvenirs."
+              className=""
+            />
+          </div>
 
           <BentoDemo />
           <Accordion

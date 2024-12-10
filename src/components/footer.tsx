@@ -25,10 +25,6 @@ const footerData = [
         name: "Predict",
         url: "/predict",
       },
-      {
-        name: "Dashboard",
-        url: "/dashboard",
-      },
     ],
   },
   {

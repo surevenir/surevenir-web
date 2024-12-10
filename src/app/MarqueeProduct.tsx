@@ -8,7 +8,7 @@ import Link from "next/link";
 
 const reviews = [
   {
-    img: "/product-image/1.png",
+    img: "/product-image/1.jpg",
   },
   {
     img: "/product-image/2.png",

@@ -318,15 +318,15 @@ export default function DashboardProductView({
     try {
       const result = await deleteProduct(selectedProduct.id, userId as string);
       if (result) {
-        toast("Successfully deleted product");
+        toast.success("Successfully deleted product");
         setSelectedProduct(null);
         await fetchProducts();
       } else {
-        toast("Failed to delete product");
+        toast.error("Failed to delete product");
       }
     } catch (error: any) {
       console.error("Error deleting product:", error.message);
-      toast("An error occurred while deleting the product");
+      toast.error("An error occurred while deleting the product");
     } finally {
       setLoading(false);
     }
@@ -338,14 +338,14 @@ export default function DashboardProductView({
       const result = await deleteImage(url, userId as string);
 
       if (result) {
-        toast("Successfully deleted image");
+        toast.success("Successfully deleted image");
         await fetchProducts();
       } else {
-        toast("Failed to delete image");
+        toast.error("Failed to delete image");
       }
     } catch (error: any) {
       console.error("Error deleting image:", error.message);
-      toast("An error occurred while deleting the image");
+      toast.error("An error occurred while deleting the image");
     } finally {
       setLoading(false);
     }

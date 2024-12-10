@@ -101,7 +101,7 @@ export default function DashboardUserView({
       }
     } catch (error: any) {
       console.error("Error updating product:", error.message);
-      toast("An error occurred while updating the user");
+      toast.error("An error occurred while updating the user");
     } finally {
       setLoading(false);
     }

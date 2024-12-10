@@ -165,16 +165,16 @@ export default function DashboardProductCategoryView({
     try {
       const result = await postCategory(data, token as string);
       if (result) {
-        toast("Category added successfully!");
+        toast.success("Category added successfully!");
         formAdd.reset();
         await fetchCategories();
         setFile(undefined);
       } else {
-        toast("Failed to post category");
+        toast.error("Failed to post category");
       }
     } catch (error: any) {
       console.error("Error adding category:", error.message);
-      toast("An error occurred while adding the category.");
+      toast.error("An error occurred while adding the category.");
     } finally {
       setLoading(false);
     }
@@ -218,7 +218,7 @@ export default function DashboardProductCategoryView({
       }
     } catch (error: any) {
       console.error("Error updating category:", error.message);
-      toast("An error occurred while updating the category.");
+      toast.error("An error occurred while updating the category.");
     } finally {
       setLoading(false);
     }
@@ -235,13 +235,13 @@ export default function DashboardProductCategoryView({
           prev.filter((category) => category.id !== selectedCategory.id)
         );
         setSelectedCategory(null);
-        toast("Successfully deleted category");
+        toast.success("Successfully deleted category");
       } else {
-        toast("Failed to delete category");
+        toast.error("Failed to delete category");
       }
     } catch (error: any) {
       console.error("Error deleting category:", error.message);
-      toast("An error occurred while deleting the category");
+      toast.error("An error occurred while deleting the category");
     } finally {
       setLoading(false);
     }
@@ -420,8 +420,8 @@ export default function DashboardProductCategoryView({
 
       {!loading && (
         <Table>
-          <TableCaption>
-            {categories.length != 0 ? "Categories List" : "No Categories Found"}
+          <TableCaption className="pb-4">
+            Categories List ({filteredCategories.length} / {categories.length})
           </TableCaption>
           <TableHeader>
             <TableRow>

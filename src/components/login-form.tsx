@@ -68,10 +68,10 @@ export function LoginForm() {
       const user = await getUserById(userId as string, userId as string);
 
       if (user.role == "ADMIN" || user.role == "MERCHANT") {
-        toast("Welcome to Dashboard");
+        toast.success("Welcome to Dashboard");
         router.push("/dashboard");
       } else {
-        toast("Welcome Home");
+        toast.success("Welcome Home");
         router.push("/");
       }
     } catch (err: any) {

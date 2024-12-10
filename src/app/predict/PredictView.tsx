@@ -232,7 +232,6 @@ export default function PredictView() {
                       <TableRow>
                         <TableCell>Range Price</TableCell>
                         <TableCell>
-                          {" "}
                           {result.category.range_price
                             .split("-")
                             .map((price) =>
