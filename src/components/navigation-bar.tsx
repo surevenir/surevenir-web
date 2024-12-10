@@ -157,7 +157,7 @@ export default function NavigationBar() {
       <div className="top-0 right-0 left-0 z-50 fixed lg:flex justify-between items-center hidden bg-white/5 shadow-md backdrop-blur-md px-8 md:px-16 lg:px-32 py-4 w-full">
         <Link href={"/"} className="flex items-center gap-2">
           <Image
-            src="/logo.png"
+            src="/logo.jpg"
             width={35}
             height={30}
             alt="Picture of the author"

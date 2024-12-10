@@ -392,7 +392,7 @@ function ReviewCard({ review }: { review: Review }) {
       </div>
       <div className="flex items-center gap-2 py-4">
         <img
-          src={`${review.user.profile_image_url || "/logo.png"}`}
+          src={`${review.user.profile_image_url || "/logo.jpg"}`}
           alt=""
           className="rounded-full w-8 h-8 object-cover"
         />

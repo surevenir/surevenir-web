@@ -163,7 +163,7 @@ function CheckoutCart(checkout: Checkout) {
                   src={
                     detail.product.images
                       ? detail.product.images[0].url
-                      : "/logo.png"
+                      : "/logo.jpg"
                   }
                   alt="Image"
                   className="rounded-md w-20 h-20 object-cover"
@@ -172,7 +172,7 @@ function CheckoutCart(checkout: Checkout) {
 
               {detail.product == null && (
                 <img
-                  src={"/logo.png"}
+                  src={"/logo.jpg"}
                   alt="Image"
                   className="rounded-md w-20 h-20 object-cover"
                 />
