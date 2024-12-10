@@ -91,7 +91,7 @@ const defaultCenter = {
   lng: 115.25923437673299,
 };
 
-export default function DashboardMarketView({
+export default function DashboardOrderView({
   markets: initialMarkets,
 }: MarketViewProps) {
   const [markets, setMarkets] = useState<Market[]>(initialMarkets);

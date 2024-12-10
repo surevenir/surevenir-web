@@ -11,6 +11,7 @@ import {
   ShoppingBasketIcon,
   HousePlugIcon,
   UsersIcon,
+  ShoppingCartIcon,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -86,6 +87,17 @@ const data = {
         {
           title: "Product Reviews",
           url: "/dashboard/products/reviews",
+        },
+      ],
+    },
+    {
+      title: "Orders",
+      url: "/dashboard/orders",
+      icon: ShoppingCartIcon,
+      items: [
+        {
+          title: "Orders Details",
+          url: "/dashboard/orders",
         },
       ],
     },
@@ -183,12 +195,10 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [user, setUser] = React.useState<User>();
-  // const token = Cookies.get("idToken");
   const userId = Cookies.get("userId") || "";
   const fetchUser = async () => {
     const user: any = (await getUserById(userId, userId as string)) || [];
     setUser(user);
-    console.log("user dashboard", user);
   };
 
   React.useEffect(() => {

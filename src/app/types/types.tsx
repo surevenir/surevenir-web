@@ -270,3 +270,10 @@ export enum MediaType {
   PRODUCT = "product",
   REVIEW = "review",
 }
+
+export enum CheckoutStatus {
+  PENDING = "PENDING",
+  DELIVERED = "DELIVERED",
+  CANCELLED = "CANCELLED",
+  COMPLETED = "COMPLETED",
+}

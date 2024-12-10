@@ -77,7 +77,10 @@ export async function getCarts(token: string): Promise<Cart | null> {
   }
 }
 
-export async function getCheckout(token: string): Promise<Checkout[] | null> {
+export async function getCheckout(
+  token: string,
+  type: boolean = false
+): Promise<Checkout[] | null> {
   try {
     const host: string =
       process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
@@ -86,7 +89,9 @@ export async function getCheckout(token: string): Promise<Checkout[] | null> {
       throw new Error("Authorization token is missing.");
     }
 
-    const response = await fetch(`${host}/api/carts/checkout`, {
+    const url = type == true ? "/checkout/all" : "/checkout";
+
+    const response = await fetch(`${host}/api/carts${url}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -227,6 +232,48 @@ export async function checkoutProductInCart(
     }
   } catch (error: any) {
     console.error("Failed to checkout in cart:", error.message);
+    return null;
+  }
+}
+
+export async function updateCheckoutStatus(
+  data: {
+    id: number;
+    status: string;
+  },
+  token: string
+): Promise<any | null> {
+  try {
+    const host: string =
+      process.env.NEXT_PUBLIC_HOST || "http://localhost:3000";
+
+    const response = await fetch(
+      `${host}/api/carts/checkout/${data.id}/status`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status: data.status }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorMessage = `Error update checkout: ${response.status} ${response.statusText}`;
+      throw new Error(errorMessage);
+    }
+
+    const result = await response.json();
+
+    console.log("RESULT ACTION", JSON.stringify(result, null, 2));
+
+    if (result.success && result.data) {
+      return result.data;
+    } else {
+      throw new Error("Invalid API response format.");
+    }
+  } catch (error: any) {
     return null;
   }
 }
