@@ -52,6 +52,14 @@ export default function NavigationBar() {
       { title: "Predict", url: "/predict" },
       { title: "Profile", url: "/profile" },
     ],
+    MERCHANT: [
+      { title: "Markets", url: "/markets" },
+      { title: "Merchants", url: "/merchants" },
+      { title: "Products", url: "/products" },
+      { title: "Predict", url: "/predict" },
+      { title: "Profile", url: "/profile" },
+      { title: "Dashboard", url: "/dashboard" },
+    ],
     NOTLOGIN: [
       { title: "Markets", url: "/markets" },
       { title: "Merchants", url: "/merchants" },
@@ -89,7 +97,9 @@ export default function NavigationBar() {
         if (fetchedUser) {
           setUser(fetchedUser);
           const userRole =
-            fetchedUser.role === "ADMIN" || fetchedUser.role === "USER"
+            fetchedUser.role === "ADMIN" ||
+            fetchedUser.role === "USER" ||
+            fetchedUser.role === "MERCHANT"
               ? fetchedUser.role
               : "NOTLOGIN";
           setRole(userRole);

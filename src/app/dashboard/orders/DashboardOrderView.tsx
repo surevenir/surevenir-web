@@ -113,7 +113,6 @@ export default function DashboardMarketView({
         token as string
       );
 
-      console.log("RESULT", JSON.stringify(result, null, 2));
       if (result) {
         toast.success("Checkout updated successfully!");
         setSelectedCheckout(null);
@@ -188,7 +187,7 @@ export default function DashboardMarketView({
                     <AlertDialogTrigger asChild>
                       <Button>Detail</Button>
                     </AlertDialogTrigger>
-                    <AlertDialogContent>
+                    <AlertDialogContent className="max-h-[90vh] overflow-y-scroll">
                       <AlertDialogHeader>
                         <AlertDialogTitle>Checkout Detail</AlertDialogTitle>
                       </AlertDialogHeader>

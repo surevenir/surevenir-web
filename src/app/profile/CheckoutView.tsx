@@ -178,115 +178,119 @@ function CheckoutCart(checkout: Checkout) {
                 />
               )}
 
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button
-                    className="mt-4"
-                    onClick={() => {
-                      form.setValue("product_id", detail.product_id);
-                      form.setValue("user_id", token as string);
-                    }}
-                  >
-                    Review
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Review Product</DialogTitle>
-                    <p className="pt-4">{detail.product_identity}</p>
-                  </DialogHeader>
-                  <Form {...form}>
-                    <form
-                      className="space-y-4"
-                      onSubmit={form.handleSubmit(handleAddReview)}
+              {checkout.status == "COMPLETED" && (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      className="mt-4"
+                      onClick={() => {
+                        form.setValue("product_id", detail.product_id);
+                        form.setValue("user_id", token as string);
+                      }}
                     >
-                      <FormField
-                        control={form.control}
-                        name="rating"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Rating</FormLabel>
-                            <Select
-                              defaultValue={"5"}
-                              onValueChange={(value) =>
-                                field.onChange(parseInt(value, 10))
-                              } // Konversi ke number
-                            >
+                      Review
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Review Product</DialogTitle>
+                      <p className="pt-4">{detail.product_identity}</p>
+                    </DialogHeader>
+                    <Form {...form}>
+                      <form
+                        className="space-y-4"
+                        onSubmit={form.handleSubmit(handleAddReview)}
+                      >
+                        <FormField
+                          control={form.control}
+                          name="rating"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Rating</FormLabel>
+                              <Select
+                                defaultValue={"5"}
+                                onValueChange={(value) =>
+                                  field.onChange(parseInt(value, 10))
+                                } // Konversi ke number
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select your rating" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="1">1</SelectItem>
+                                  <SelectItem value="2">2</SelectItem>
+                                  <SelectItem value="3">3</SelectItem>
+                                  <SelectItem value="4">4</SelectItem>
+                                  <SelectItem value="5">5</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormDescription>
+                                You can manage email addresses in your{" "}
+                                <Link href="/examples/forms">
+                                  email settings
+                                </Link>
+                                .
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="comment"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Review</FormLabel>
                               <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select your rating" />
-                                </SelectTrigger>
+                                <Input
+                                  placeholder="Enter your review"
+                                  {...field}
+                                />
                               </FormControl>
-                              <SelectContent>
-                                <SelectItem value="1">1</SelectItem>
-                                <SelectItem value="2">2</SelectItem>
-                                <SelectItem value="3">3</SelectItem>
-                                <SelectItem value="4">4</SelectItem>
-                                <SelectItem value="5">5</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormDescription>
-                              You can manage email addresses in your{" "}
-                              <Link href="/examples/forms">email settings</Link>
-                              .
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                      <FormField
-                        control={form.control}
-                        name="comment"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Review</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Enter your review"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                        <FormField
+                          control={form.control}
+                          name="images"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Image</FormLabel>
+                              <FormControl>
+                                <Input
+                                  type="file"
+                                  multiple
+                                  onChange={(e) => {
+                                    if (e.target.files) {
+                                      const selectedFiles = Array.from(
+                                        e.target.files
+                                      );
+                                      handleFileChange(selectedFiles);
+                                      field.onChange(selectedFiles); // Set nilai ke form
+                                    }
+                                  }}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                      <FormField
-                        control={form.control}
-                        name="images"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Image</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="file"
-                                multiple
-                                onChange={(e) => {
-                                  if (e.target.files) {
-                                    const selectedFiles = Array.from(
-                                      e.target.files
-                                    );
-                                    handleFileChange(selectedFiles);
-                                    field.onChange(selectedFiles); // Set nilai ke form
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <DialogFooter>
-                        <Button type="submit" disabled={loading}>
-                          {loading ? "Adding..." : "Add Review"}
-                        </Button>
-                      </DialogFooter>
-                    </form>
-                  </Form>
-                </DialogContent>
-              </Dialog>
+                        <DialogFooter>
+                          <Button type="submit" disabled={loading}>
+                            {loading ? "Adding..." : "Add Review"}
+                          </Button>
+                        </DialogFooter>
+                      </form>
+                    </Form>
+                  </DialogContent>
+                </Dialog>
+              )}
             </div>
 
             <div className="space-y-2">

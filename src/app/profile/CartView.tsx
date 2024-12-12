@@ -313,7 +313,7 @@ export default function CartView({ cart }: CartViewProps) {
                   {loading ? "Processing..." : "Checkout"}
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent>
+              <AlertDialogContent className="max-h-[90vh] overflow-y-scroll">
                 <AlertDialogHeader>
                   <AlertDialogTitle>
                     Are you sure you want to proceed with checkout?

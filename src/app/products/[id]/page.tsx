@@ -84,7 +84,6 @@ export default function ProductDetailPage() {
         setProduct(product);
         setPrice(product.price);
         setisFavorite(product.is_favorite);
-        console.log(JSON.stringify(product, null, 2));
       }
     } catch (error) {
       console.error("Error fetching product:", error);

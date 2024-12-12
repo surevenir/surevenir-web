@@ -266,8 +266,6 @@ export async function updateCheckoutStatus(
 
     const result = await response.json();
 
-    console.log("RESULT ACTION", JSON.stringify(result, null, 2));
-
     if (result.success && result.data) {
       return result.data;
     } else {
