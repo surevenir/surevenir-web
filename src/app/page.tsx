@@ -85,7 +85,7 @@ export default function HomePage() {
             </AnimatedGradientText>
             <SparklesText text="Surevenir" className="py-8 text-center" />
             <SparklesText
-              text="Scan and Find Souvenir Easily"
+              text="Tourist Friendly, Scam Free"
               className="text-3xl text-center"
             />
             <TypographyMuted className="justify-center lg:px-32 py-4 text-center text-lg">

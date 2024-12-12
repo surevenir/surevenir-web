@@ -1,36 +1,144 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Surevenir Web App
 
-## Getting Started
+<div align="center">
+  <img src="./assets/image.png" width="100%" >
+</div>
 
-First, run the development server:
+This project is a **web-based application** designed as a **dashboard** tailored specifically for **admin** and **merchant roles**. The dashboard facilitates the management of critical data such as:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Markets**: Manage market information and details.
+- **Merchants**: Oversee merchant data and activities.
+- **Products**: Add, update, or remove products listed in the marketplace.
+- **Orders**: Track and process customer orders efficiently.
+- **Users**: Manage user profiles and access.
+
+Beyond the dashboard, the platform also serves as a **marketplace focused exclusively on souvenirs**, providing features for all users to:
+
+- **Browse Market Listings**: Explore various markets available in the system.
+- **Discover Merchants and Products**: View detailed information about merchants and their products.
+- **Scan for Souvenir Details**: Utilize the scan feature to gain in-depth insights into a souvenir, including its origin, cultural background, and price range.
+
+This application aims to deliver a seamless and comprehensive experience for managing and exploring the world of souvenirs, blending the functionalities of a marketplace with the capabilities of a robust admin and merchant dashboard.
+
+## Features
+
+- **Next.js Framework**: Fast and SEO-friendly web application with SSR and SSG capabilities.
+- **React Integration**: Powerful and reusable component-based architecture.
+- **TailwindCSS**: Utility-first CSS framework for rapid UI development.
+- **TypeScript Support**: Strongly-typed codebase for better maintainability and reduced runtime errors.
+- **Responsive Design**: Ensures optimal user experience across devices.
+- Environment-based configuration using `.env.local` for secure and dynamic setups.
+
+## Project Structure
+
+The project is organized into the following structure for better readability and scalability:
+
+```
+surevenir-web/
+├── public/         # Static files (e.g., images, icons, fonts)
+├── src/
+│   ├── app/        # Next.js routing system (pages and API routes)
+│   ├── components/ # Reusable UI components
+│   ├── styles/     # Global and module-specific CSS files
+│   ├── utils/      # Utility functions
+│   ├── hooks/      # Custom React hooks
+│   └── types/      # Custom TypeScript type definitions
+├── .gitignore      # Specifies intentionally untracked files that Git should ignore.
+├── components.json # Shadcn Component
+├── Dockerfile      # Docker configuration files
+├── example.env      # Environment variables
+├── next.config.js  # Next.js configuration file
+├── tailwind.config.js # TailwindCSS configuration file
+├── tsconfig.json   # TypeScript configuration file
+└── package.json    # Project dependencies and scripts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Prerequisites
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Ensure you have the following tools installed:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Node.js** (version 16 or later)
+- **npm** or **yarn**
 
-## Learn More
+## Installation
 
-To learn more about Next.js, take a look at the following resources:
+To set up the project locally, follow these steps:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone this repository:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   git clone https://github.com/surevenir/surevenir-web.git
+   cd surevenir-web/
+   ```
 
-## Deploy on Vercel
+2. Install dependencies:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   npm install
+   yarn install
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. Install dependencies:
+
+   ```bash
+   npm install
+   yarn install
+   ```
+
+4. Configure environment variables:
+
+   ```bash
+   cp example.env .env
+   ```
+
+5. Start the development server:
+
+   ```bash
+   npm run dev
+   yarn dev
+   ```
+
+## Scripts
+
+```bash
+npm run dev / yarn dev      # Start the development server.
+npm run build / yarn build  # Build the application for production.
+npm run start / yarn start  # Start the production server.
+npm run lint / yarn lint    # Run linting checks.
+```
+
+## Deployment
+
+1. Build the project:
+
+Compile TypeScript files into JavaScript for production use:
+
+```bash
+npm run build
+```
+
+2. Set up the production environment variables:
+
+Ensure that the .env file is properly configured for production settings.
+
+3. Build image:
+
+```bash
+docker build -t <tag> .
+```
+
+3. Push image:
+
+```bash
+docker push <tag>
+```
+
+## Technologies Used
+
+- Framework: Next.js
+- Styling: TailwindCSS
+- Language: TypeScript
+- Component: ShadcnUI & MagicUI
+- Icons: Lucide React
+
+## Thank You

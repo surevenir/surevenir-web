@@ -49,9 +49,7 @@ export default function Footer() {
         <div className="flex md:flex-row flex-col justify-between px-8 lg:px-0">
           <div>
             <h2 className="mb-4 font-bold text-xl">Surevenir</h2>
-            <p className="text-gray-400 text-sm">
-              Scan and Find Souvenir Easily
-            </p>
+            <p className="text-gray-400 text-sm">Tourist Friendly, Scam Free</p>
             <div className="flex items-center gap-4 mt-4 pb-4">
               <Link href="https://github.com/surevenir">
                 <GitHubLogoIcon width={30} height={30} />
